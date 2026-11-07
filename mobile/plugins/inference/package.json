@@ -1,0 +1,19 @@
+{
+  "name": "@sxarf/inference",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sxarf AI native llama.cpp inference bridge for Capacitor",
+  "types": "src/index.ts",
+  "module": "src/index.ts",
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^8.0.0"
+  }
+}

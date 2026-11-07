@@ -1,0 +1,304 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-RelWithDebInfo-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "llama",
+					"childIndexes" : 
+					[
+						2,
+						5,
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-llama-RelWithDebInfo-c4da600fba645a62bae4.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp"
+				},
+				{
+					"build" : "llama/ggml",
+					"childIndexes" : 
+					[
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-llama.ggml-RelWithDebInfo-08504b34303da8ae5582.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml"
+				},
+				{
+					"build" : "llama/ggml/src",
+					"childIndexes" : 
+					[
+						4
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-llama.ggml.src-RelWithDebInfo-f7655e5aba7ff1ae5f4a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				},
+				{
+					"build" : "llama/ggml/src/ggml-cpu",
+					"jsonFile" : "directory-llama.ggml.src.ggml-cpu-RelWithDebInfo-c5341842d79a762f2d68.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 2,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/ggml-cpu"
+				},
+				{
+					"build" : "llama/src",
+					"jsonFile" : "directory-llama.src-RelWithDebInfo-c2dda9681950d0e6a074.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/src",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "llama/vendor",
+					"childIndexes" : 
+					[
+						7,
+						8,
+						9,
+						10,
+						11
+					],
+					"jsonFile" : "directory-llama.vendor-RelWithDebInfo-6579bedcfa97f669f107.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor"
+				},
+				{
+					"build" : "llama/vendor/hash",
+					"jsonFile" : "directory-llama.vendor.hash-RelWithDebInfo-2183c7cf013051dd5ac0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/hash",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "llama/vendor/miniaudio",
+					"jsonFile" : "directory-llama.vendor.miniaudio-RelWithDebInfo-80526b3b9e3f9c1db196.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/miniaudio"
+				},
+				{
+					"build" : "llama/vendor/nlohmann",
+					"jsonFile" : "directory-llama.vendor.nlohmann-RelWithDebInfo-e4fa92bc918279a4dbaf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/nlohmann"
+				},
+				{
+					"build" : "llama/vendor/sheredom",
+					"jsonFile" : "directory-llama.vendor.sheredom-RelWithDebInfo-50b6a745320c3ed6b430.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/sheredom"
+				},
+				{
+					"build" : "llama/vendor/stb",
+					"jsonFile" : "directory-llama.vendor.stb-RelWithDebInfo-052c831e2c318a7a0daf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 1,
+					"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/stb"
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "sxarf_inference",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						2
+					],
+					"directoryIndexes" : 
+					[
+						1,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11
+					],
+					"name" : "llama.cpp",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3,
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2,
+						3,
+						4
+					],
+					"name" : "ggml",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 3,
+					"id" : "ggml::@96d03cab6fb05857ea28",
+					"jsonFile" : "target-ggml-RelWithDebInfo-d403f60f08bf9709c3b6.json",
+					"name" : "ggml",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "ggml-base::@96d03cab6fb05857ea28",
+					"jsonFile" : "target-ggml-base-RelWithDebInfo-3545285fc4309d298239.json",
+					"name" : "ggml-base",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "ggml-cpu::@96d03cab6fb05857ea28",
+					"jsonFile" : "target-ggml-cpu-RelWithDebInfo-ca51e0b1363184f7e682.json",
+					"name" : "ggml-cpu",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "llama::@e48e26b3b0ed6be1ceb6",
+					"jsonFile" : "target-llama-RelWithDebInfo-96aae9dcbbdf90731d3a.json",
+					"name" : "llama",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "sxarf_runtime::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-sxarf_runtime-RelWithDebInfo-93baf20efc1ce6fcb693.json",
+					"name" : "sxarf_runtime",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "vendor-hash::@ea559a60d9092ac2a409",
+					"jsonFile" : "target-vendor-hash-RelWithDebInfo-a25dabf89daf0b7d8c70.json",
+					"name" : "vendor-hash",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/armeabi-v7a",
+		"source" : "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/src/main/cpp"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

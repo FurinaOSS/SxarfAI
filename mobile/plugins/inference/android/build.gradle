@@ -1,0 +1,32 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.sxarf.ai.inference'
+    compileSdk rootProject.ext.has('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 36
+
+    defaultConfig {
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+        minSdkVersion rootProject.ext.has('minSdkVersion') ? rootProject.ext.minSdkVersion : 24
+        externalNativeBuild {
+            cmake {
+                cppFlags '-std=c++17'
+                arguments '-DSXARF_ANDROID_VULKAN=OFF'
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
+            version '3.22.1'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':capacitor-android')
+}

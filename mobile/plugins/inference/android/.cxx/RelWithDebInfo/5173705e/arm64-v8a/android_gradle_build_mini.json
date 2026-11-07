@@ -1,0 +1,68 @@
+{
+  "buildFiles": [
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/src/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/hash/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/miniaudio/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/nlohmann/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/sheredom/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/stb/CMakeLists.txt",
+    "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/asimlatif/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/asimlatif/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "ggml-cpu::@96d03cab6fb05857ea28": {
+      "artifactName": "ggml-cpu",
+      "abi": "arm64-v8a",
+      "output": "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/ggml/src/libggml-cpu.a",
+      "runtimeFiles": []
+    },
+    "vendor-hash::@ea559a60d9092ac2a409": {
+      "artifactName": "vendor-hash",
+      "abi": "arm64-v8a",
+      "output": "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/vendor/hash/libvendor-hash.a",
+      "runtimeFiles": []
+    },
+    "ggml::@96d03cab6fb05857ea28": {
+      "artifactName": "ggml",
+      "abi": "arm64-v8a",
+      "output": "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/ggml/src/libggml.a",
+      "runtimeFiles": []
+    },
+    "ggml-base::@96d03cab6fb05857ea28": {
+      "artifactName": "ggml-base",
+      "abi": "arm64-v8a",
+      "output": "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/ggml/src/libggml-base.a",
+      "runtimeFiles": []
+    },
+    "llama::@e48e26b3b0ed6be1ceb6": {
+      "artifactName": "llama",
+      "abi": "arm64-v8a",
+      "output": "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/src/libllama.a",
+      "runtimeFiles": []
+    },
+    "sxarf_runtime::@6890427a1f51a3e7e1df": {
+      "artifactName": "sxarf_runtime",
+      "abi": "arm64-v8a",
+      "output": "/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/build/intermediates/cxx/RelWithDebInfo/5173705e/obj/arm64-v8a/libsxarf_runtime.so",
+      "runtimeFiles": []
+    }
+  }
+}

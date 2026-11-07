@@ -1,0 +1,89 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 294,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 313,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 321,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"llama/src/libllama.a"
+			],
+			"targetId" : "llama::@e48e26b3b0ed6be1ceb6",
+			"targetIndex" : 3,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/include/llama.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/include/llama-cpp.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/llama",
+			"paths" : 
+			[
+				"/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/llama-config.cmake",
+				"/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/llama-config-version.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib/pkgconfig",
+			"paths" : 
+			[
+				"/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/arm64-v8a/llama/llama.pc"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "llama",
+		"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp"
+	}
+}

@@ -1,0 +1,12 @@
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/src/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/hash/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/miniaudio/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/nlohmann/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/sheredom/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/stb/CMakeLists.txt
+/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/src/main/cpp/CMakeLists.txt

@@ -1,0 +1,107 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 349,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 350,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 414,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"llama/ggml/src/libggml.a"
+			],
+			"targetId" : "ggml::@96d03cab6fb05857ea28",
+			"targetIndex" : 0,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-cpu.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-alloc.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-backend.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-blas.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-cann.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-cpp.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-cuda.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-opt.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-metal.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-rpc.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-virtgpu.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-sycl.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-vulkan.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-webgpu.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-zendnn.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/ggml-openvino.h",
+				"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/include/gguf.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"llama/ggml/src/libggml-base.a"
+			],
+			"targetId" : "ggml-base::@96d03cab6fb05857ea28",
+			"targetIndex" : 1,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/ggml",
+			"paths" : 
+			[
+				"/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/armeabi-v7a/llama/ggml/ggml-config.cmake",
+				"/Users/asimlatif/Downloads/proj/mobile/plugins/inference/android/.cxx/RelWithDebInfo/5173705e/armeabi-v7a/llama/ggml/ggml-config-version.cmake"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "llama/ggml",
+		"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml"
+	}
+}

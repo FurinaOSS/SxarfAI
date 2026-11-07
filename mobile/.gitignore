@@ -1,0 +1,9 @@
+node_modules/
+dist/
+ios/App/Pods/
+ios/App/build/
+android/.gradle/
+android/app/build/
+android/build/
+*.xcuserstate
+xcuserdata/

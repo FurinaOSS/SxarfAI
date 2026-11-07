@@ -1,6 +1,6 @@
 {
   "name": "smollm2-mlx-chat",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "description": "Local AI chat for Apple Silicon macOS and Windows x64",
   "main": "main.js",
   "scripts": {
@@ -9,20 +9,29 @@
     "check": "node --check main.js && node --check preload.js",
     "test": "venv/bin/python -m unittest discover -s server -p 'test_*.py' -v",
     "bench": "venv/bin/python server/bench.py",
-    "build": "electron-builder --mac",
-    "build:win": "electron-builder --win nsis --x64"
+    "build": "npm run build:web && electron-builder --mac --arm64",
+    "build:win": "npm run build:web && electron-builder --win nsis --x64",
+    "build:web": "node scripts/build-web.js"
   },
   "devDependencies": {
     "electron": "^33.2.0",
-    "electron-builder": "^25.1.8"
+    "electron-builder": "^25.1.8",
+    "html-minifier-terser": "7.2.0"
   },
   "build": {
     "appId": "com.sxarf.ai",
     "productName": "Sxarf AI",
+    "artifactName": "SxarfAI-${version}-${os}-${arch}.${ext}",
     "files": [
       "main.js",
       "preload.js",
-      "index.html",
+      {
+        "from": "build",
+        "to": ".",
+        "filter": [
+          "index.html"
+        ]
+      },
       "package.json",
       "icon/**",
       "node_modules/katex/**",
@@ -68,6 +77,7 @@
       }
     ],
     "mac": {
+      "artifactName": "SxarfAI-${version}-mac.${ext}",
       "target": [
         "dmg"
       ],
@@ -81,7 +91,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "icon/icon.ico",

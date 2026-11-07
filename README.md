@@ -1,13 +1,14 @@
-# Sxarf AI
+# Sxarf AI — V2.0.4
 
 Setup: `./setup.sh` · Run: `npm start` · Tests: `npm test`
 
 ## Windows build
 
 The Windows x64 build uses a separate CPU backend based on llama.cpp; MLX
-features remain on the Apple Silicon macOS backend. Windows users need 64-bit
-Python 3.10–3.12 and an internet connection. On first launch the app installs
-its Python dependencies and downloads the Llama 3.2 3B GGUF model.
+features remain on the Apple Silicon macOS backend. On first launch the app
+prepares its private Python runtime, installs dependencies, and downloads five
+supported GGUF models (about 9 GB total). An internet connection and sufficient
+disk space are required.
 
 On Windows, install Node.js and Python, then run:
 
@@ -16,14 +17,20 @@ npm install
 npm run build:win
 ```
 
-The NSIS installer is written to `dist/`. Windows currently supports local
-text chat and CoCode; web research agents, image analysis, and local speech
-transcription are not included. Inference is CPU-only.
+The NSIS installer is written to `dist/`. Windows supports local text chat,
+CoCode, and research agents. Research uses keyless web search and public HTTPS
+sources when available. Image analysis and local speech transcription are not
+included. Inference is CPU-only; native Windows GPU acceleration is used for
+the application interface, not AI generation.
 
 The MLX server keeps one model resident at a time. Research specialists load
 sequentially and are released before the selected chat model is restored. The
-default chat model is Llama 3.2 3B; model choices are in the app's model menu.
+default chat model is Llama 3.2 3B Uncensored (6-bit); model choices are in the app's model menu.
 Gemma 2 uses an unquantized attention cache for MLX compatibility.
+
+The coding model requires Ollama. When selected, the app starts the local
+Ollama service if needed, downloads the public Q4_K_M model file (about 1.1 GB),
+and imports it automatically. Interrupted downloads resume when selected again.
 
 MLX allocation defaults are 2.5 GiB active memory and 0.25 GiB cache. Both can
 be lowered with `MLX_MEMORY_LIMIT_GB` and `MLX_CACHE_LIMIT_GB` (upper-capped by

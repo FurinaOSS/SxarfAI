@@ -1,0 +1,60 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"ggml_add_backend_library",
+			"ggml_add_cpu_backend_variant_impl"
+		],
+		"files" : 
+		[
+			"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/CMakeLists.txt",
+			"/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 596,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 27,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 396,
+				"parent" : 2
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"llama/ggml/src/libggml-cpu.a"
+			],
+			"targetId" : "ggml-cpu::@96d03cab6fb05857ea28",
+			"targetIndex" : 2,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "llama/ggml/src",
+		"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/ggml/src"
+	}
+}

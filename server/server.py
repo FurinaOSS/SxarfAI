@@ -26,11 +26,15 @@ import json
 import os
 import queue
 import re
+import shutil
 import threading
 import time
 import subprocess
 import sys
 import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from io import BytesIO
 from concurrent.futures import Future
@@ -65,8 +69,8 @@ MODELS = {
         "repo": "mlx-community/SmolLM3-3B-4bit",
     },
     "llama32": {
-        "name": "Llama-3.2-3B",
-        "repo": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+        "name": "Llama-3.2-3B Uncensored (6-bit)",
+        "repo": "mlx-community/Llama-3.2-3B-Instruct-uncensored-6bit",
     },
     "lfm25": {
         "name": "LFM2.5-2.6B",
@@ -81,10 +85,29 @@ MODELS = {
         "repo": "mlx-community/Phi-3.5-mini-instruct-4bit",
     },
     "stablecode": {
-        "name": "Stable Code 3B · Coding",
-        "repo": "mlx-community/stable-code-3b-4bit",
+        "name": "DeepSeek R1 Distill Qwen 1.5B · Coding (Ollama)",
+        "repo": "mradermacher/DeepSeek-R1-Distill-Qwen-1.5B-abliterated-GGUF:Q4_K_M",
+        "gguf_url": (
+            "https://huggingface.co/mradermacher/"
+            "DeepSeek-R1-Distill-Qwen-1.5B-abliterated-GGUF/resolve/"
+            "b4c8f307c8040a1697c035419688c929ea421cb6/"
+            "DeepSeek-R1-Distill-Qwen-1.5B-abliterated.Q4_K_M.gguf"
+        ),
+        "gguf_size": 1117321504,
+        "ollama_model": "sxarf-deepseek-r1-distill-qwen-1.5b-abliterated:q4_k_m",
+        "provider": "ollama",
     },
 }
+
+_ollama_host = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
+OLLAMA_BASE_URL = (
+    _ollama_host if "://" in _ollama_host else f"http://{_ollama_host}"
+)
+OLLAMA_TIMEOUT_SECONDS = 3600
+OLLAMA_STARTUP_TIMEOUT_SECONDS = 30
+_ollama_url = urllib.parse.urlsplit(OLLAMA_BASE_URL)
+OLLAMA_IS_LOCAL = _ollama_url.hostname in {"localhost", "127.0.0.1", "::1", "0.0.0.0"}
+_ollama_process = None
 
 # Old ids that may still be saved or set in the environment.
 MODEL_ALIASES = {"qwen3": "llama32"}
@@ -269,17 +292,258 @@ def warmup(model_instance, tokenizer_instance):
         print(f"[MLX] Warmup skipped: {exc}", flush=True)
 
 
+def ollama_is_running():
+    request = urllib.request.Request(f"{OLLAMA_BASE_URL}/api/version")
+    try:
+        with urllib.request.urlopen(request, timeout=2):
+            return True
+    except urllib.error.HTTPError:
+        return True
+    except urllib.error.URLError:
+        return False
+
+
+def ensure_ollama_running():
+    global _ollama_process
+
+    if ollama_is_running():
+        return
+    if not OLLAMA_IS_LOCAL:
+        raise RuntimeError(
+            f"Could not connect to Ollama at {OLLAMA_BASE_URL}. "
+            "Check that the configured Ollama server is running."
+        )
+
+    if _ollama_process is None or _ollama_process.poll() is not None:
+        ollama_path = shutil.which("ollama")
+        if not ollama_path:
+            raise RuntimeError(
+                "Ollama is not installed or is not on PATH. Install Ollama, then "
+                "select this model again."
+            )
+        ollama_env = os.environ.copy()
+        ollama_env["OLLAMA_HOST"] = _ollama_url.netloc
+        print("[Ollama] Starting local Ollama service", flush=True)
+        _ollama_process = subprocess.Popen(
+            [ollama_path, "serve"],
+            stdin=subprocess.DEVNULL,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            env=ollama_env,
+        )
+
+    deadline = time.monotonic() + OLLAMA_STARTUP_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if ollama_is_running():
+            return
+        if _ollama_process.poll() is not None:
+            raise RuntimeError(
+                "The Ollama service exited before it became ready. "
+                "Check the backend log for details."
+            )
+        time.sleep(0.5)
+    raise RuntimeError(
+        f"Ollama did not become ready at {OLLAMA_BASE_URL} within "
+        f"{OLLAMA_STARTUP_TIMEOUT_SECONDS} seconds."
+    )
+
+
+def download_ollama_gguf(model_config):
+    source_url = model_config["gguf_url"]
+    filename = Path(urllib.parse.urlsplit(source_url).path).name
+    support_dir = Path(
+        os.getenv("SXARF_SUPPORT_DIR", Path.home() / ".cache" / "sxarf-ai")
+    )
+    model_dir = support_dir / "ollama-models"
+    model_dir.mkdir(parents=True, exist_ok=True)
+    model_path = model_dir / filename
+    partial_path = model_path.with_suffix(model_path.suffix + ".part")
+    expected_size = model_config["gguf_size"]
+
+    if model_path.is_file() and model_path.stat().st_size == expected_size:
+        with model_path.open("rb") as model_file:
+            if model_file.read(4) == b"GGUF":
+                return model_path
+        model_path.unlink()
+
+    offset = partial_path.stat().st_size if partial_path.exists() else 0
+    if offset == expected_size:
+        with partial_path.open("rb") as model_file:
+            if model_file.read(4) == b"GGUF":
+                partial_path.replace(model_path)
+                return model_path
+    if offset >= expected_size:
+        partial_path.unlink()
+        offset = 0
+    headers = {"User-Agent": "SxarfAI/1.0"}
+    if offset:
+        headers["Range"] = f"bytes={offset}-"
+    request = urllib.request.Request(source_url, headers=headers)
+    try:
+        with urllib.request.urlopen(request, timeout=90) as response:
+            if offset and getattr(response, "status", None) != 206:
+                offset = 0
+            content_length = response.headers.get("Content-Length")
+            total_size = (
+                offset + int(content_length)
+                if content_length and content_length.isdigit()
+                else expected_size
+            )
+            if total_size != expected_size:
+                raise RuntimeError(
+                    f"Unexpected model file size: expected {expected_size} bytes, "
+                    f"server reported {total_size} bytes."
+                )
+            if total_size is not None:
+                free_space = shutil.disk_usage(model_dir).free
+                if total_size - offset > free_space:
+                    raise RuntimeError(
+                        f"Not enough disk space for {filename}: "
+                        f"{(total_size - offset) / 1024**3:.1f} GiB required."
+                    )
+
+            mode = "ab" if offset else "wb"
+            downloaded = offset
+            last_report = time.monotonic()
+            with partial_path.open(mode) as model_file:
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    model_file.write(chunk)
+                    downloaded += len(chunk)
+                    if time.monotonic() - last_report >= 5:
+                        progress = (
+                            f"{downloaded / total_size:.0%}"
+                            if total_size
+                            else f"{downloaded / 1024**2:.0f} MiB"
+                        )
+                        print(
+                            f"[Ollama] Downloading {filename}: {progress}",
+                            flush=True,
+                        )
+                        last_report = time.monotonic()
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace").strip()
+        raise RuntimeError(
+            detail or f"Could not download the model file (HTTP {exc.code})."
+        ) from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(
+            f"Could not download the model file from Hugging Face: {exc.reason}"
+        ) from exc
+
+    if total_size is not None and downloaded != total_size:
+        raise RuntimeError(
+            f"Model download was incomplete ({downloaded} of {total_size} bytes). "
+            "Select the model again to resume."
+        )
+    with partial_path.open("rb") as model_file:
+        if model_file.read(4) != b"GGUF":
+            raise RuntimeError(
+                "The downloaded model file is invalid (GGUF header is missing)."
+            )
+    partial_path.replace(model_path)
+    return model_path
+
+
+def ollama_create_command(ollama_path: str, model_name: str, modelfile_path: Path):
+    return [ollama_path, "create", model_name, "-f", str(modelfile_path)]
+
+
+def install_ollama_model(model_config):
+    ensure_ollama_running()
+    model_name = model_config["ollama_model"]
+    show_request = urllib.request.Request(
+        f"{OLLAMA_BASE_URL}/api/show",
+        data=json.dumps({"model": model_name}).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(show_request, timeout=10):
+            print(f"[Ollama] Model already installed: {model_name}", flush=True)
+            return
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:
+            raise RuntimeError(
+                f"Could not check the installed Ollama model (HTTP {exc.code})."
+            ) from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(
+            f"Could not check the installed Ollama model: {exc.reason}"
+        ) from exc
+
+    model_path = download_ollama_gguf(model_config)
+    ollama_path = shutil.which("ollama")
+    if not ollama_path:
+        raise RuntimeError("The Ollama command-line tool is not available on PATH.")
+    with tempfile.TemporaryDirectory(prefix="sxarf-ollama-") as temp_dir:
+        modelfile_path = Path(temp_dir) / "Modelfile"
+        modelfile_path.write_text(
+            f"FROM {model_path}\n",
+            encoding="utf-8",
+        )
+        command = ollama_create_command(ollama_path, model_name, modelfile_path)
+        print(f"[Ollama] Importing GGUF as {model_name}", flush=True)
+        try:
+            result = subprocess.run(
+                command,
+                cwd=temp_dir,
+                capture_output=True,
+                text=True,
+                timeout=OLLAMA_TIMEOUT_SECONDS,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(
+                f"Ollama import timed out after {OLLAMA_TIMEOUT_SECONDS} seconds."
+            ) from exc
+        if result.stdout:
+            print(result.stdout.rstrip(), flush=True)
+        if result.stderr:
+            print(result.stderr.rstrip(), file=sys.stderr, flush=True)
+        if result.returncode:
+            detail = (result.stderr or result.stdout).strip()
+            raise RuntimeError(
+                f"Ollama could not import {model_name}"
+                + (f": {detail}" if detail else f" (exit code {result.returncode})")
+            )
+    model_path.unlink(missing_ok=True)
+
+
 def load_model(model_key: str):
     global active_model, model_status, model_error
 
     if model_key not in MODELS:
         raise ValueError(f"Unknown model: {model_key}")
+    config = MODELS[model_key]
+    if config.get("provider") == "ollama":
+        model_status = "loading"
+        model_error = None
+        try:
+            gc.unfreeze()
+            MODEL_MANAGER.release()
+            active_model = None
+            gc.collect()
+            clear_mx_cache()
+            print(f"[Ollama] Installing {config['repo']}", flush=True)
+            install_ollama_model(config)
+            active_model = model_key
+            gc.freeze()
+            model_status = "ready"
+            print(f"[Ollama] Ready: {config['name']}", flush=True)
+            return
+        except Exception as exc:
+            model_status = "error"
+            model_error = str(exc)
+            raise
+
     model_key_for_manager = f"chat:{model_key}"
     if active_model == model_key and MODEL_MANAGER.is_active(model_key_for_manager):
         model_status = "ready"
         return
 
-    config = MODELS[model_key]
     model_status = "loading"
     model_error = None
     print(f"\n[MLX] Loading {config['name']} ({config['repo']})", flush=True)
@@ -327,7 +591,7 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(
     title="Local Multi-Model MLX Server",
-    version="4.0.0",
+    version="2.0.4",
     lifespan=lifespan,
 )
 
@@ -739,11 +1003,92 @@ def _sse(payload) -> str:
     return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
 
+def ollama_chat_payload(req: ChatRequest):
+    return {
+        "model": MODELS["stablecode"]["ollama_model"],
+        "messages": [message.model_dump() for message in req.messages],
+        "stream": True,
+        "options": {
+            "num_predict": req.max_tokens,
+            "temperature": req.temperature,
+            "top_p": req.top_p,
+        },
+    }
+
+
+def ollama_chat_events(req: ChatRequest):
+    request = urllib.request.Request(
+        f"{OLLAMA_BASE_URL}/api/chat",
+        data=json.dumps(ollama_chat_payload(req)).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=OLLAMA_TIMEOUT_SECONDS) as response:
+            for line in response:
+                if not line.strip():
+                    continue
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    raise RuntimeError(
+                        f"Ollama returned invalid streaming JSON: {exc}"
+                    ) from exc
+                if event.get("error"):
+                    raise RuntimeError(str(event["error"]))
+                message = event.get("message") or {}
+                if message.get("content"):
+                    yield {"delta": message["content"]}
+                if event.get("done"):
+                    yield {"done": event}
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace").strip()
+        if exc.code == 404 or "not found" in detail.lower():
+            detail = (
+                f"{detail or 'Ollama could not find the model.'} "
+                "Select the coding model again to install it automatically."
+            )
+        raise RuntimeError(
+            detail or f"Ollama request failed with HTTP {exc.code}."
+        ) from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(
+            f"Could not connect to Ollama at {OLLAMA_BASE_URL}. Start Ollama and run "
+            "select the coding model again to install it automatically. "
+            f"({exc.reason})"
+        ) from exc
+
+
+def collect_ollama_chat(req: ChatRequest):
+    started = time.perf_counter()
+    content = []
+    stats = {}
+    for event in ollama_chat_events(req):
+        if "delta" in event:
+            content.append(event["delta"])
+        if "done" in event:
+            stats = event["done"]
+    return ChatResponse(
+        content="".join(content).strip(),
+        tokens=int(stats.get("eval_count") or 0),
+        prompt_tokens=int(stats.get("prompt_eval_count") or 0),
+        time_sec=round(
+            (stats.get("total_duration") or int((time.perf_counter() - started) * 1e9))
+            / 1e9,
+            2,
+        ),
+        model=MODELS["stablecode"]["name"],
+        context_limit=MAX_CONTEXT_TOKENS,
+    )
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     validate(req)
 
     def job():
+        if active_model == "stablecode":
+            return collect_ollama_chat(req)
         mx.reset_peak_memory()
         started = time.perf_counter()
         parts = []
@@ -768,7 +1113,8 @@ async def chat(req: ChatRequest):
     except HTTPException:
         raise
     except Exception as exc:
-        print(f"[MLX] Generation error: {exc}", flush=True)
+        backend = "Ollama" if active_model == "stablecode" else "MLX"
+        print(f"[{backend}] Generation error: {exc}", flush=True)
         raise HTTPException(status_code=500, detail=f"Generation failed: {exc}")
 
 
@@ -790,6 +1136,40 @@ async def chat_stream(req: ChatRequest):
                 push(None)
                 return
             try:
+                if active_model == "stablecode":
+                    started = time.perf_counter()
+                    first = None
+                    stats = {}
+                    for event in ollama_chat_events(req):
+                        if cancel.is_set():
+                            break
+                        if "delta" in event:
+                            if first is None:
+                                first = time.perf_counter() - started
+                            push(_sse({"delta": event["delta"]}))
+                        if "done" in event:
+                            stats = event["done"]
+                    if not cancel.is_set():
+                        elapsed = stats.get("total_duration")
+                        generation_duration = stats.get("eval_duration")
+                        push(_sse({
+                            "done": True,
+                            "tokens": stats.get("eval_count", 0),
+                            "prompt_tokens": stats.get("prompt_eval_count", 0),
+                            "time_sec": round(
+                                elapsed / 1e9 if elapsed else time.perf_counter() - started,
+                                2,
+                            ),
+                            "first_token_sec": round(first or 0.0, 3),
+                            "tokens_per_sec": (
+                                round(stats["eval_count"] / (generation_duration / 1e9), 1)
+                                if stats.get("eval_count") and generation_duration
+                                else 0
+                            ),
+                            "model": MODELS["stablecode"]["name"],
+                            "context_limit": MAX_CONTEXT_TOKENS,
+                        }))
+                    return
                 mx.reset_peak_memory()
                 started = time.perf_counter()
                 first = None
@@ -820,7 +1200,8 @@ async def chat_stream(req: ChatRequest):
             except HTTPException as exc:
                 push(_sse({"error": exc.detail, "status": exc.status_code}))
             except Exception as exc:
-                print(f"[MLX] Generation error: {exc}", flush=True)
+                backend = "Ollama" if active_model == "stablecode" else "MLX"
+                print(f"[{backend}] Generation error: {exc}", flush=True)
                 push(_sse({"error": f"Generation failed: {exc}", "status": 500}))
             finally:
                 push(None)

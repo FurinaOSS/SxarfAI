@@ -521,7 +521,7 @@ body.reduce-motion .scarf-fringe, body.anim-off .scarf-fringe { opacity: 0 !impo
       <span class="coding-indicator" id="codingIndicator">Coding model</span>
       <label class="pill model" id="modelPill">
         <select id="modelSelect" aria-label="Choose model" disabled>
-          <option value="llama32">Llama-3.2-3B</option>
+          <option value="llama32">Llama-3.2-3B Uncensored (6-bit)</option>
         </select>
       </label>
       <label class="pill">
@@ -638,11 +638,11 @@ body.reduce-motion .scarf-fringe, body.anim-off .scarf-fringe { opacity: 0 !impo
     const MODEL_FALLBACKS = [
       { id: "smollm2", name: "SmolLM2-1.7B" },
       { id: "smollm3", name: "SmolLM3-3B" },
-      { id: "llama32", name: "Llama-3.2-3B" },
+      { id: "llama32", name: "Llama-3.2-3B Uncensored (6-bit)" },
       { id: "lfm25", name: "LFM2.5-2.6B" },
       { id: "gemma2", name: "Gemma-2-2B" },
       { id: "phi35", name: "Phi-3.5-mini" },
-      { id: "stablecode", name: "Stable Code 3B · Coding" }
+      { id: "stablecode", name: "DeepSeek-R1-Distill-Qwen-1.5B-abliterated · Coding (Ollama)" }
     ];
     const DEFAULT_SETTINGS = {
       agentsMode: "auto", maxTokens: 4096, temperature: 0.7,
@@ -1445,11 +1445,13 @@ body.reduce-motion .scarf-fringe, body.anim-off .scarf-fringe { opacity: 0 !impo
       messagesEl.scrollTop = messagesEl.scrollHeight;
       stickToBottom = true;
     }
+    const toBottomBtn = $("toBottom"); let toBottomShown = false;
     messagesEl.addEventListener("scroll", () => {
-      const far = distanceFromBottom() > 160;
-      stickToBottom = distanceFromBottom() < 90;
-      $("toBottom").classList.toggle("visible", far);
-    });
+      const d = distanceFromBottom();
+      stickToBottom = d < 90;
+      const far = d > 160;
+      if (far !== toBottomShown) { toBottomShown = far; toBottomBtn.classList.toggle("visible", far); }
+    }, { passive: true });
     $("toBottom").addEventListener("click", () => scrollToBottom(true));
 
     function makeScarf() {
@@ -1764,11 +1766,13 @@ body.reduce-motion .scarf-fringe, body.anim-off .scarf-fringe { opacity: 0 !impo
       if (modelId === selectedModel) return;
       isSwitchingModel = true; updateControls(); loadingOverlay.classList.remove("hidden"); $("retryBootBtn").classList.remove("visible");
       const selectedName = modelSelect.selectedOptions[0]?.textContent || modelId;
-      progressText.textContent = `Loading ${selectedName}… The first switch may take a while.`;
+      progressText.textContent = modelId === "stablecode"
+        ? `Preparing ${selectedName}… The first download may take a while.`
+        : `Loading ${selectedName}… The first switch may take a while.`;
       try {
         const result = await fetchJson(`${API}/select-model`, {
           method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: modelId })
-        }, 600000);
+        }, 3600000);
         selectedModel = result.active || modelId; preferredModel = selectedModel;
         modelSelect.value = selectedModel; updateCodingIndicator(); await persistState();
         progressText.textContent = `${result.name || selectedName} is ready.`;
@@ -1795,7 +1799,12 @@ body.reduce-motion .scarf-fringe, body.anim-off .scarf-fringe { opacity: 0 !impo
       const target = available.has(preferredModel) ? preferredModel : (data.active || models[0]?.id || DEFAULT_MODEL_ID);
       modelSelect.replaceChildren();
       for (const model of models) {
-        const option = document.createElement("option"); option.value = model.id; option.textContent = model.name || model.id; modelSelect.appendChild(option);
+        const option = document.createElement("option");
+        option.value = model.id;
+        option.textContent = model.id === "stablecode"
+          ? "DeepSeek-R1-Distill-Qwen-1.5B-abliterated · Coding (Ollama)"
+          : model.name || model.id;
+        modelSelect.appendChild(option);
       }
       selectedModel = data.active || DEFAULT_MODEL_ID;
       modelSelect.value = selectedModel;
@@ -2775,6 +2784,7 @@ const msgs = $q("#messages");
 if (msgs) new MutationObserver(recs => {
   let users = 0, started = false, done = null;
   for (const r of recs) {
+    if (r.type === "childList" && r.target !== msgs && r.target.closest?.(".streaming")) continue;
     if (r.type === "childList") r.addedNodes.forEach(n => {
       if (n.nodeType !== 1 || !n.classList) return;
       const row = n.querySelector?.(".typing-row");
@@ -2844,16 +2854,61 @@ const msgs = $q("#messages");
 
 /* ---- 1. smooth paced streaming ---- */
 const _rm = renderMarkdown, st = new WeakMap();
+/* Incremental streaming render: finished blocks (everything up to the last blank line that is
+   outside a code fence / math block) are rendered ONCE and kept. Only the unfinished tail is
+   re-rendered per frame, and an open code fence just appends text to the existing <code>.
+   The final pass (flush) still does one full render, so the end result is identical. */
+function advance(s, text) {
+  let nl;
+  while ((nl = text.indexOf("\n", s.pos)) >= 0) {
+    const line = text.slice(s.pos, nl); s.pos = nl + 1;
+    if (/^\s*```/.test(line)) { if (!s.math) s.fence = !s.fence; }
+    else if (!s.fence && /^\s*(\$\$|\\\[|\\\])\s*$/.test(line)) s.math = !s.math;
+    else if (!s.fence && !s.math && !line.trim()) s.cut = s.pos;
+  }
+}
+function dropTail(el, s) { while (el.childNodes.length > s.count) el.lastChild.remove(); }
 renderMarkdown = function (el, md) {
-  if (!el.classList.contains("streaming") || document.body.classList.contains("anim-off")) return _rm(el, md);
-  let s = st.get(el); if (!s) st.set(el, s = { shown: 0, raf: 0, md: "" });
+  if (!el.classList.contains("streaming")) return _rm(el, md);
+  let s = st.get(el);
+  if (!s) st.set(el, s = { shown: 0, raf: 0, md: "", pos: 0, cut: 0, fence: false, math: false, count: 0, committed_: 0, open: null, openLen: 0, tail: null });
   s.md = String(md ?? "");
   if (!s.raf) {
     const tick = () => {
       const gap = s.md.length - s.shown;
       if (gap <= 0 || !el.classList.contains("streaming")) { s.raf = 0; return; }
-      s.shown += Math.max(2, Math.ceil(gap * .1));
-      _rm(el, s.md.slice(0, s.shown)); scrollToBottom();
+      s.shown += document.body.classList.contains("anim-off") ? gap : Math.max(2, Math.ceil(gap * .1));
+      const text = s.md.slice(0, s.shown);
+      advance(s, text);
+      if (s.cut > s.committed_) {
+        // commit newly finished blocks once
+        const tmp = document.createElement("div"); _rm(tmp, text.slice(s.committed_, s.cut));
+        dropTail(el, s); el.append(...tmp.childNodes);
+        s.count = el.childNodes.length; s.committed_ = s.cut; s.open = null; s.tail = null;
+      }
+      const tail = text.slice(s.committed_);
+      if (tail !== s.tail) {
+        s.tail = tail;
+        const fm = tail.match(/^\s*```([^`\n]*)\n/);
+        const body = fm ? tail.slice(fm[0].length) : "";
+        if (fm && !/^\s*```\s*$/m.test(body)) {
+          const lang = fm[1].trim();
+          if (s.open && s.open.block.isConnected && s.open.lang === lang && body.length >= s.openLen) {
+            const node = s.open.codeEl.firstChild;
+            if (node) node.appendData(body.slice(s.openLen)); else s.open.codeEl.textContent = body;
+          } else {
+            dropTail(el, s); appendCodeBlock(el, body, lang);
+            const block = el.lastChild;
+            s.open = { block, codeEl: block.querySelector("pre code"), lang };
+          }
+          s.openLen = body.length;
+        } else {
+          s.open = null;
+          const tmp = document.createElement("div"); _rm(tmp, tail);
+          dropTail(el, s); el.append(...tmp.childNodes);
+        }
+      }
+      scrollToBottom();
       s.raf = requestAnimationFrame(tick);
     };
     s.raf = requestAnimationFrame(tick);
@@ -2895,13 +2950,13 @@ function editFrom(w) {
 
 new MutationObserver(recs => {
   for (const r of recs) {
-    if (r.type === "childList") r.addedNodes.forEach(n => {
+    if (r.type === "childList") { if (r.target !== msgs && r.target.closest?.(".streaming")) continue; r.addedNodes.forEach(n => {
       if (n.nodeType !== 1) return;
       scan(n);
       if (n.classList.contains("user") && !n.querySelector(".sx-edit")) {
         const b = makeFootButton(ICON_EDIT, "Edit", () => editFrom(n)); b.classList.add("sx-edit"); n.querySelector(".message-foot")?.appendChild(b);
       }
-    });
+    }); }
     else if ((r.oldValue || "").includes("streaming") && !r.target.classList.contains("streaming")) { flush(r.target); scan(r.target); }
   }
 }).observe(msgs, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true });
@@ -3130,7 +3185,12 @@ if (typeof _snc === "function") {
 
 /* 4. cursor-reactive hero orb magnet (max 37px displacement, smooth spring return to center) */
 const empty = $q("#emptyState");
+let _pmE = null, _pmRaf = 0;
 window.addEventListener("pointermove", e => {
+  _pmE = e; if (_pmRaf) return;
+  _pmRaf = requestAnimationFrame(() => { _pmRaf = 0; onMove(_pmE); });
+}, { passive: true });
+function onMove(e) {
   if (!full()) return;
   const orb = $q(".hero-orb");
   if (orb && empty.offsetParent) {
@@ -3168,7 +3228,7 @@ window.addEventListener("pointermove", e => {
     if (di < 70 && !b.disabled) { b.style.setProperty("--mx", (dxi * .22).toFixed(2) + "px"); b.style.setProperty("--my", (dyi * .22).toFixed(2) + "px"); }
     else { b.style.setProperty("--mx", "0px"); b.style.setProperty("--my", "0px"); }
   }
-}, { passive: true });
+}
 
 /* 5. smooth crossfade when switching chats */
 const _lc = loadChat;

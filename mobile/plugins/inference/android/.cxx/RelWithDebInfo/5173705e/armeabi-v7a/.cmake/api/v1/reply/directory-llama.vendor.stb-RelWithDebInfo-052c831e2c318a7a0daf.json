@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "llama/vendor/stb",
+		"source" : "/Users/asimlatif/Downloads/proj/mobile/native/llama.cpp/vendor/stb"
+	}
+}
