@@ -1,231 +1,1409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090711">
-  <meta name="description" content="Sxarf AI — Your AI. Your Hardware. Your Control. Download the local AI app for Windows, macOS, iPhone, and Android.">
-  <title>Sxarf AI — Your AI. Your Hardware. Your Control.</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #080808;
-      --panel: rgba(255,255,255,.045);
-      --panel-hover: rgba(255,255,255,.075);
-      --line: rgba(255,255,255,.12);
-      --muted: #a3a3a3;
-      --text: #f5f5f5;
-      --purple: #d4d4d4;
-      --purple-2: #737373;
-      --blue: #bdbdbd;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background:
-        radial-gradient(ellipse at 50% -15%, rgba(255,255,255,.09), transparent 48%),
-        radial-gradient(ellipse at 95% 35%, rgba(180,180,180,.055), transparent 35%),
-        var(--bg);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
-    header {
-      height: 78px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-    }
-    .brand { display: flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: -.04em; font-size: 19px; }
-    .logo {
-      width: 35px; height: 35px; display: grid; place-items: center; border-radius: 12px;
-      background: linear-gradient(140deg, #f0f0f0, #858585 65%, #343434);
-      box-shadow: 0 5px 28px rgba(255,255,255,.12); font-weight: 900; color: white;
-    }
-    nav { display: flex; gap: 27px; align-items: center; color: #c4bfd3; font-size: 13px; }
-    nav a:hover, .footer a:hover { color: white; }
-    .nav-cta { padding: 10px 15px; border: 1px solid var(--line); border-radius: 999px; }
-    .hero { text-align: center; padding: 100px 0 65px; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.055);
-      color: #dedede; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-    }
-    .dot { width: 7px; height: 7px; background: #e5e5e5; border-radius: 50%; box-shadow: 0 0 12px #e5e5e5; }
-    h1 { font-size: clamp(48px, 8vw, 86px); line-height: .99; letter-spacing: -.075em; margin: 27px 0 20px; font-weight: 820; }
-    .gradient { background: linear-gradient(100deg, #ffffff 10%, #d4d4d4 55%, #8f8f8f 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .lead { max-width: 610px; margin: 0 auto; color: var(--muted); font-size: clamp(15px, 2vw, 18px); line-height: 1.75; }
-    .hero-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
-    .btn {
-      display: inline-flex; justify-content: center; align-items: center; gap: 10px;
-      padding: 14px 21px; border-radius: 13px; font-weight: 700; font-size: 14px;
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .primary { color: #111; background: linear-gradient(110deg, #eeeeee, #a3a3a3); box-shadow: 0 9px 32px rgba(255,255,255,.10); }
-    .primary:hover { box-shadow: 0 12px 38px rgba(255,255,255,.16); }
-    .secondary { border: 1px solid var(--line); background: rgba(255,255,255,.04); color: #e7e2f1; }
-    .tiny-note { color: #827d91; font-size: 12px; margin-top: 17px; }
-    .section-head { text-align: center; margin: 15px 0 28px; }
-    .section-head h2 { margin: 0 0 9px; font-size: clamp(26px, 4vw, 37px); letter-spacing: -.05em; }
-    .section-head p { margin: 0; color: var(--muted); font-size: 14px; }
-    .downloads { padding: 30px 0 88px; scroll-margin-top: 25px; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .platform {
-      position: relative; min-width: 0; padding: 23px 20px 20px; border-radius: 19px;
-      border: 1px solid var(--line); background: linear-gradient(155deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
-      overflow: hidden;
-    }
-    .platform:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.32); background: var(--panel-hover); }
-    .platform:before { content:""; position:absolute; width:120px; height:120px; right:-65px; top:-70px; background:rgba(255,255,255,.10); filter:blur(25px); border-radius:50%; }
-    .platform-icon { width: 43px; height: 43px; display:grid; place-items:center; border-radius: 13px; background: rgba(255,255,255,.075); border:1px solid rgba(255,255,255,.13); color:#eeeeee; margin-bottom: 18px; }
-    .platform-icon svg { width: 23px; height: 23px; }
-    .platform h3 { margin: 0 0 6px; font-size: 17px; letter-spacing: -.025em; }
-    .platform p { margin: 0; min-height: 38px; color: var(--muted); font-size: 12px; line-height: 1.55; }
-    .platform .btn { width:100%; margin-top: 20px; padding: 12px 10px; font-size: 13px; }
-    .format { color:#817b91; font-size:11px; margin-top:12px; text-align:center; }
-    .details { padding: 0 0 90px; }
-    .feature-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
-    .feature { border:1px solid var(--line); background:var(--panel); border-radius:17px; padding:22px; }
-    .feature-symbol { color:#d4d4d4; font-size:19px; margin-bottom:12px; }
-    .feature h3 { font-size:15px; margin:0 0 8px; }
-    .feature p { font-size:13px; line-height:1.7; color:var(--muted); margin:0; }
-    .release {
-      display:flex; justify-content:space-between; align-items:center; gap:20px; padding:24px 27px;
-      border:1px solid rgba(255,255,255,.14); border-radius:18px;
-      background:linear-gradient(110deg, rgba(255,255,255,.075), rgba(150,150,150,.035));
-      margin-bottom:85px;
-    }
-    .release strong { display:block; margin-bottom:5px; }
-    .release span { color:var(--muted); font-size:12px; }
-    .release .btn { white-space:nowrap; }
-    footer { border-top:1px solid rgba(255,255,255,.08); padding:25px 0 35px; color:#827d91; font-size:12px; }
-    .footer-inner { display:flex; justify-content:space-between; gap:15px; flex-wrap:wrap; }
-    .footer-links { display:flex; gap:19px; }
-    @media (max-width: 850px) {
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .hero { padding-top: 80px; }
-    }
-    @media (max-width: 560px) {
-      .shell { width:min(100% - 30px, 440px); }
-      header { height:66px; }
-      nav { gap:13px; font-size:12px; }
-      nav a:not(.nav-cta) { display:none; }
-      .hero { padding:75px 0 48px; }
-      h1 { font-size: clamp(47px, 14vw, 68px); }
-      .lead { font-size:15px; }
-      .grid { grid-template-columns:1fr; gap:11px; }
-      .platform { display:grid; grid-template-columns:52px 1fr; column-gap:14px; align-items:center; padding:17px; }
-      .platform-icon { grid-row:span 2; margin:0; }
-      .platform h3 { align-self:end; }
-      .platform p { min-height:0; }
-      .platform .btn { grid-column:1 / -1; margin-top:15px; }
-      .format { grid-column:1 / -1; }
-      .feature-grid { grid-template-columns:1fr; }
-      .release { align-items:flex-start; flex-direction:column; padding:21px; }
-      .release .btn { width:100%; }
-      .downloads { padding-bottom:65px; }
-      .details { padding-bottom:65px; }
-      .footer-inner { flex-direction:column; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior:auto !important; transition:none !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Sxarf AI — Your AI. Your Hardware. Your Control. Download for Windows, macOS, iPhone and Android.">
+<title>Sxarf AI — Your AI. Your Hardware. Your Control.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f6f4;--bg2:#ffffff;--text:#0c0c0d;--muted:#5f5f66;--line:rgba(0,0,0,.09);
+  --card:rgba(255,255,255,.7);--card-h:#fff;--glow:rgba(0,0,0,.06);--btn:#0c0c0d;--btn-t:#fff;
+  --shadow:0 30px 80px -30px rgba(0,0,0,.25);--chip:rgba(0,0,0,.045);
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#070708;--bg2:#101012;--text:#f4f4f5;--muted:#9a9aa3;--line:rgba(255,255,255,.1);
+  --card:rgba(255,255,255,.04);--card-h:rgba(255,255,255,.075);--glow:rgba(255,255,255,.09);--btn:#f4f4f5;--btn-t:#0a0a0b;
+  --shadow:0 40px 90px -30px rgba(0,0,0,.9);--chip:rgba(255,255,255,.06);}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--bg:#070708;--bg2:#101012;--text:#f4f4f5;--muted:#9a9aa3;--line:rgba(255,255,255,.1);
+  --card:rgba(255,255,255,.04);--card-h:rgba(255,255,255,.075);--glow:rgba(255,255,255,.09);--btn:#f4f4f5;--btn-t:#0a0a0b;
+  --shadow:0 40px 90px -30px rgba(0,0,0,.9);--chip:rgba(255,255,255,.06);}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5}
+a{color:inherit;text-decoration:none}
+.shell{width:min(1120px,calc(100% - 40px));margin:0 auto}
+#bg{position:fixed;inset:0;pointer-events:none;z-index:0}
+.ghost-fibers-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ghost-fibers-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(ellipse at 50% 20%,#000 0,transparent 65%);-webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 0,transparent 65%)}
+main,header,footer{position:relative;z-index:2}
+header{position:sticky;top:0;z-index:10;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line)}
+.nav{height:68px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:-.03em;font-size:18px}
+.logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--text);color:var(--bg);font-weight:800;font-size:16px}
+.links{display:flex;align-items:center;gap:26px;font-size:13px;color:var(--muted)}
+.links a:hover{color:var(--text)}
+.pill{padding:9px 16px;border:1px solid var(--line);border-radius:999px;color:var(--text)!important;background:var(--chip);transition:.2s}
+.pill:hover{border-color:var(--muted)}
+.hero{text-align:center;padding:96px 0 40px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:12px;color:var(--muted);letter-spacing:.02em}
+h1{font-size:clamp(46px,8.4vw,92px);line-height:.98;letter-spacing:-.06em;font-weight:800;margin:28px 0 22px}
+h1 span{display:block}
+.fade{background:linear-gradient(180deg,var(--text) 30%,var(--muted));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:560px;margin:0 auto;color:var(--muted);font-size:clamp(15px,2vw,18px);line-height:1.7}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:34px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 22px;border-radius:14px;font-weight:600;font-size:14px;border:1px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.solid{background:var(--btn);color:var(--btn-t);box-shadow:0 10px 30px -10px rgba(0,0,0,.45)}
+.btn.ghost{border-color:var(--line);background:var(--card);color:var(--text)}
+.btn.ghost:hover{background:var(--card-h)}
+.note{margin-top:16px;font-size:12px;color:var(--muted)}
+/* app preview */
+.stage{margin:56px auto 0;max-width:860px;perspective:1400px}
+.window{border:1px solid var(--line);border-radius:20px;background:var(--bg2);box-shadow:var(--shadow);overflow:hidden;transform:rotateX(6deg);transform-origin:50% 100%;transition:transform .6s}
+.stage:hover .window{transform:rotateX(0)}
+.bar{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.bar b{width:11px;height:11px;border-radius:50%;background:var(--line)}
+.bar em{margin-left:auto;margin-right:auto;font-style:normal;font-size:11px;color:var(--muted);font-family:var(--mono)}
+.chat{padding:28px;display:grid;gap:14px;text-align:left;min-height:250px}
+.msg{max-width:78%;padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.6}
+.me{justify-self:end;background:var(--btn);color:var(--btn-t);border-bottom-right-radius:5px}
+.ai{background:var(--chip);border:1px solid var(--line);border-bottom-left-radius:5px}
+.cursor{display:inline-block;width:7px;height:15px;background:var(--text);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.meta{display:flex;gap:8px;flex-wrap:wrap;padding:0 28px 24px}
+.tag{font:500 11px var(--mono);color:var(--muted);padding:5px 10px;border-radius:8px;background:var(--chip);border:1px solid var(--line)}
+/* downloads */
+.section{padding:90px 0 0}
+.head{text-align:center;margin-bottom:34px}
+.head h2{margin:0 0 10px;font-size:clamp(28px,4.4vw,42px);letter-spacing:-.05em}
+.head p{margin:0;color:var(--muted);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{position:relative;padding:24px 20px 20px;border-radius:22px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;transition:transform .25s,border-color .25s,background .25s;display:flex;flex-direction:column}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),var(--glow),transparent 70%);opacity:0;transition:opacity .3s}
+.card:hover{transform:translateY(-6px);border-color:var(--muted);background:var(--card-h)}
+.card:hover::before{opacity:1}
+.card.rec{border-color:var(--text)}
+.badge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--text);color:var(--bg);display:none}
+.card.rec .badge{display:block}
+.ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--chip);border:1px solid var(--line);margin-bottom:20px;position:relative}
+.ico svg{width:24px;height:24px}
+.card h3{margin:0 0 6px;font-size:18px;letter-spacing:-.03em;position:relative}
+.card p{margin:0 0 22px;color:var(--muted);font-size:13px;line-height:1.6;flex:1;position:relative}
+.card .btn{width:100%;padding:12px;font-size:13px;position:relative}
+.fmt{margin-top:12px;text-align:center;font:400 11px var(--mono);color:var(--muted);position:relative}
+/* features */
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.f{padding:26px;border-radius:20px;border:1px solid var(--line);background:var(--card);transition:.25s}
+.f:hover{background:var(--card-h);transform:translateY(-3px)}
+.f svg{width:22px;height:22px;margin-bottom:16px}
+.f h3{margin:0 0 8px;font-size:16px;letter-spacing:-.02em}
+.f p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.7}
+.release{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:26px 30px;border:1px solid var(--line);border-radius:22px;background:var(--card);margin:90px 0}
+.release strong{display:block;margin-bottom:4px;font-size:16px}
+.release span{color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--line);padding:26px 0 36px;color:var(--muted);font-size:12px}
+.foot{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.foot div{display:flex;gap:20px}
+.foot a:hover{color:var(--text)}
+.tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:22px}
+.tab{font:600 13px var(--sans);padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;transition:.2s}
+.tab:hover{color:var(--text)}
+.tab[aria-selected="true"]{background:var(--btn);color:var(--btn-t);border-color:transparent}
+.gpanel{max-width:760px;margin:0 auto;padding:28px;border:1px solid var(--line);border-radius:22px;background:var(--card)}
+.gpanel[hidden]{display:none}
+.gpanel h3{margin:0 0 4px;font-size:20px;letter-spacing:-.03em}
+.gpanel .sub{margin:0 0 20px;color:var(--muted);font-size:13px}
+.gpanel h4{margin:26px 0 12px;font-size:14px;letter-spacing:-.01em}
+.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:12px}
+.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;font-size:14px;line-height:1.6}
+.steps li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--chip);border:1px solid var(--line);font:600 12px var(--mono)}
+.steps a{text-decoration:underline;text-underline-offset:3px}
+.callout{margin-top:18px;padding:14px 16px;border-radius:14px;background:var(--chip);border:1px solid var(--line);color:var(--muted);font-size:12.5px;line-height:1.65}
+.callout b{color:var(--text)}
+.new{max-width:760px;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.new div{padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--card);font-size:13px;color:var(--muted);line-height:1.55}
+.new b{display:block;color:var(--text);margin-bottom:3px;font-size:13.5px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;font-weight:600}
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s}
+.modal.open{opacity:1;pointer-events:auto}
+.sheet{width:min(640px,100%);max-height:100%;overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow);transform:translateY(18px) scale(.98);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.modal.open .sheet{transform:none}
+.sheet-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--chip);color:var(--text);cursor:pointer;font-size:14px}
+#mbody .sub{margin-bottom:18px}
+.sheet .btn{width:100%;margin-top:22px}
+@media(max-width:700px){.new{grid-template-columns:1fr}.gpanel{padding:20px}.sheet{padding:20px}}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.feat{grid-template-columns:1fr}}
+@media(max-width:560px){
+  .shell{width:calc(100% - 28px)}.nav{height:60px}.links{gap:16px}.links a:not(.pill):not(.keep){display:none}
+  .hero{padding:64px 0 30px}.grid{grid-template-columns:1fr}.chat{padding:18px}.msg{max-width:90%}
+  .window{transform:none}.release{flex-direction:column;align-items:flex-start;padding:22px}.release .btn{width:100%}
+  .section{padding-top:70px}.release{margin:70px 0}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.rv{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-  <header class="shell">
-    <a class="brand" href="#" aria-label="Sxarf AI home">
-      <span class="logo">S</span><span>Sxarf AI</span>
-    </a>
-    <nav aria-label="Main navigation">
+<div id="bg" aria-hidden="true"><div class="ghost-fibers-container" id="fibers"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header>
+  <div class="shell nav">
+    <a class="brand" href="#top" aria-label="Sxarf AI home"><span class="logo">S</span>Sxarf AI</a>
+    <nav class="links" aria-label="Main">
       <a href="#features">Features</a>
+      <a class="keep" href="#guide">Install guide</a>
       <a href="https://github.com/FurinaOSS/SxarfAI/releases/tag/v2.0.4">Release notes</a>
-      <a class="nav-cta" href="#download">Download</a>
+      <a class="pill" href="#download">Download</a>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section class="hero shell">
-      <div class="eyebrow">V2.0.4 · Available across four platforms</div>
-      <h1><span class="gradient">Your AI.</span><br>Your Hardware.<br><span class="gradient">Your Control.</span></h1>
-      <div class="hero-actions">
-        <a class="btn primary" href="#download">↓ &nbsp; Get Sxarf AI</a>
-        <a class="btn secondary" href="https://github.com/FurinaOSS/SxarfAI">View on GitHub ↗</a>
-      </div>
-      <div class="tiny-note">Choose your platform below · Downloads are hosted on GitHub</div>
-    </section>
+<main id="top">
+  <section class="hero shell">
+    <div class="eyebrow rv">Version 2.0.4 · Now on four platforms</div>
+    <h1 class="rv"><span class="fade">Your AI.</span><span class="fade">Your Hardware.</span><span class="fade">Your Control.</span></h1>
+    <p class="lead rv">A private AI that runs on the device in your hands. No accounts to juggle, no data leaving your machine.</p>
+    <div class="actions rv">
+      <a class="btn solid" id="heroBtn" href="#download">Get Sxarf AI ↓</a>
+      <a class="btn ghost" href="https://github.com/FurinaOSS/SxarfAI">View on GitHub ↗</a>
+    </div>
+    <div class="note rv" id="detected">Free to download · Hosted on GitHub</div>
 
-    <section class="downloads shell" id="download">
-      <div class="section-head">
-        <h2>Get Sxarf AI</h2>
-        <p>One app. Four platforms. Choose your download.</p>
-      </div>
-      <div class="grid">
-        <article class="platform">
-          <div class="platform-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="3" width="19" height="13.5" rx="2"/><path d="M8 21h8m-4-4.5V21M6 7h5m-5 3h8"/></svg>
-          </div>
-          <h3>Windows</h3>
-          <p>Windows 11 · x64 installer</p>
-          <a class="btn primary" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/Sxarf-AI-2.0.4-win-x64.exe">Download for Windows ↓</a>
-          <div class="format">.EXE · 64-bit</div>
-        </article>
-
-        <article class="platform">
-          <div class="platform-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/><circle cx="12" cy="12" r="9.5"/></svg>
-          </div>
-          <h3>macOS</h3>
-          <p>Apple Silicon · MLX optimizations</p>
-          <a class="btn primary" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/Sxarf-AI-2.0.4-mac.dmg">Download for Mac ↓</a>
-          <div class="format">.DMG · Apple Silicon</div>
-        </article>
-
-        <article class="platform">
-          <div class="platform-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 5h4m-3 14h2"/></svg>
-          </div>
-          <h3>iPhone</h3>
-          <p>iOS · IPA package (requires signing)</p>
-          <a class="btn primary" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/Sxarf-AI_2.0.4.ipa">Download for iPhone ↓</a>
-          <div class="format">.IPA · Sideloading required</div>
-        </article>
-
-        <article class="platform">
-          <div class="platform-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 8 5 4m12 4 2-4M5 10h14v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M9 4h6a5 5 0 0 1 5 5H4a5 5 0 0 1 5-5Zm-1 9v3m8-3v3"/></svg>
-          </div>
-          <h3>Android</h3>
-          <p>Android · ARM64 devices only</p>
-          <a class="btn primary" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/SxarfAI_2.0.4.apk">Download for Android ↓</a>
-          <div class="format">.APK · ARM64</div>
-        </article>
-      </div>
-    </section>
-
-    <section class="shell">
-      <div class="release">
-        <div>
-          <strong>Want the full V2.0.4 details?</strong>
-          <span>See release notes, checksums, and all available assets on GitHub.</span>
+    <div class="stage rv" aria-hidden="true">
+      <div class="window">
+        <div class="bar"><b></b><b></b><b></b><em>sxarf — running locally</em></div>
+        <div class="chat">
+          <div class="msg me" id="ask">Summarize my notes and keep it all on this machine.</div>
+          <div class="msg ai"><span id="typed"></span><span class="cursor"></span></div>
         </div>
-        <a class="btn secondary" href="https://github.com/FurinaOSS/SxarfAI/releases/tag/v2.0.4">View V2.0.4 release ↗</a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="shell footer-inner">
-      <span>© 2026 Sxarf AI · Your AI. Your Hardware. Your Control.</span>
-      <div class="footer-links">
-        <a href="https://github.com/FurinaOSS/SxarfAI">GitHub</a>
-        <a href="https://github.com/FurinaOSS/SxarfAI/releases">All releases</a>
+        <div class="meta"><span class="tag">on-device</span><span class="tag">private</span><span class="tag">v2.0.4</span></div>
       </div>
     </div>
-  </footer>
+  </section>
+
+  <section class="section shell" id="download">
+    <div class="head rv"><h2>Get Sxarf AI</h2><p>One app. Four platforms. Pick yours.</p></div>
+    <div class="grid">
+      <article class="card rv" data-os="windows">
+        <span class="badge">For your device</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="19" height="13.5" rx="2"/><path d="M8 21h8m-4-4.5V21"/></svg></div>
+        <h3>Windows</h3><p>Windows 11 · x64 installer</p>
+        <a class="btn solid" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/Sxarf-AI-2.0.4-win-x64.exe">Download for Windows ↓</a>
+        <div class="fmt">.EXE · 64-bit</div>
+      </article>
+      <article class="card rv" data-os="mac">
+        <span class="badge">For your device</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20M9 16v4m6-4v4"/></svg></div>
+        <h3>macOS</h3><p>Apple Silicon · MLX optimizations</p>
+        <a class="btn solid" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/Sxarf-AI-2.0.4-mac.dmg">Download for Mac ↓</a>
+        <div class="fmt">.DMG · Apple Silicon</div>
+      </article>
+      <article class="card rv" data-os="ios">
+        <span class="badge">For your device</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 5h4m-3 14h2"/></svg></div>
+        <h3>iPhone</h3><p>iOS · IPA package (requires signing)</p>
+        <a class="btn solid" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/Sxarf-AI_2.0.4.ipa">Download for iPhone ↓</a>
+        <div class="fmt">.IPA · Sideloading required</div>
+      </article>
+      <article class="card rv" data-os="android">
+        <span class="badge">For your device</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/><path d="M4 9v5m16-5v5"/></svg></div>
+        <h3>Android</h3><p>Android · ARM64 devices only</p>
+        <a class="btn solid" href="https://github.com/FurinaOSS/SxarfAI/releases/download/v2.0.4/SxarfAI_2.0.4.apk">Download for Android ↓</a>
+        <div class="fmt">.APK · ARM64</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section shell" id="guide">
+    <div class="head rv"><h2>Installation guide</h2><p>Step-by-step setup for every platform.</p></div>
+    <div class="tabs rv" role="tablist">
+      <button class="tab" role="tab" data-tab="windows" aria-selected="true">Windows</button>
+      <button class="tab" role="tab" data-tab="mac" aria-selected="false">macOS</button>
+      <button class="tab" role="tab" data-tab="ios" aria-selected="false">iPhone</button>
+      <button class="tab" role="tab" data-tab="android" aria-selected="false">Android</button>
+    </div>
+    <div class="rv">
+      <div class="gpanel" data-panel="windows">
+        <h3>Windows installation</h3><p class="sub">Downloadable .exe installer for Windows 11.</p>
+        <ol class="steps">
+          <li><span>Download the installer from the <b>Assets</b> section.</span></li>
+          <li><span>Temporarily turn off Windows SmartScreen if it blocks the installer.</span></li>
+          <li><span>Open the .exe.</span></li>
+          <li><span>Follow the installation instructions.</span></li>
+          <li><span><b>Turn Windows SmartScreen back on immediately after installation.</b></span></li>
+          <li><span>Launch Sxarf AI.</span></li>
+          <li><span>On first launch, Sxarf AI checks available disk space and prepares the required environment and AI models.</span></li>
+          <li><span>When setup finishes, start chatting!</span></li>
+        </ol>
+      </div>
+      <div class="gpanel" data-panel="mac" hidden>
+        <h3>macOS installation</h3><p class="sub">Downloadable .dmg installer with Apple MLX optimizations.</p>
+        <ol class="steps">
+          <li><span>Download the .dmg from the <b>Assets</b> section.</span></li>
+          <li><span>Open it and drag Sxarf AI into your Applications folder.</span></li>
+          <li><span>Launch Sxarf AI and wait for setup to finish.</span></li>
+          <li><span>If prompted, enter your Mac password to grant Sxarf AI access to its local data.</span></li>
+        </ol>
+      </div>
+      <div class="gpanel" data-panel="ios" hidden>
+        <h3>iPhone installation</h3><p class="sub">Downloadable .ipa installer. Choose a signing method below.</p>
+        <h4>Method 1: KSign or ESign</h4>
+        <ol class="steps">
+          <li><span>Download the .ipa from the <b>Assets</b> section.</span></li>
+          <li><span>Install KSign or ESign.</span></li>
+          <li><span>Import the Sxarf AI .ipa file.</span></li>
+          <li><span>Sign and install the application using a compatible signing method.</span></li>
+          <li><span>Open Sxarf AI and wait for setup to finish.</span></li>
+        </ol>
+        <div class="callout"><b>Disclaimer:</b> KSign and ESign are convenient, but their availability and signing services may change or become unavailable. If neither works, use Sideloadly as an alternative. Tools such as iLoader or SideStore can also work, subject to compatible signing and installation requirements.</div>
+        <h4>Method 2: Sideloadly</h4>
+        <ol class="steps">
+          <li><span>Get a laptop and a USB cable to connect your iPhone.</span></li>
+          <li><span>Download Sideloadly from <a href="https://sideloadly.io" target="_blank" rel="noopener">sideloadly.io</a> (macOS and Windows).</span></li>
+          <li><span>Install and open Sideloadly.</span></li>
+          <li><span>Connect your iPhone to your computer.</span></li>
+          <li><span>Enter your Apple ID when prompted for signing.</span></li>
+          <li><span>Click the IPA file selection button and locate the downloaded Sxarf AI .ipa.</span></li>
+          <li><span>Click <b>Start</b>.</span></li>
+          <li><span>Wait until Sideloadly reports <b>Done</b>.</span></li>
+          <li><span>If required, open <b>Settings → General → VPN &amp; Device Management</b> on your iPhone and trust the developer profile.</span></li>
+          <li><span>Open Sxarf AI and wait for setup to finish.</span></li>
+        </ol>
+      </div>
+      <div class="gpanel" data-panel="android" hidden>
+        <h3>Android installation</h3><p class="sub">Downloadable .apk installer. ARM64 devices only; 32-bit systems are not supported.</p>
+        <ol class="steps">
+          <li><span>Download the .apk from the <b>Assets</b> section.</span></li>
+          <li><span>Open the downloaded file. If prompted, allow your browser or file manager to install apps from this source.</span></li>
+          <li><span>Complete the installation.</span></li>
+          <li><span>Open Sxarf AI and wait for setup to finish.</span></li>
+          <li><span>Start chatting!</span></li>
+        </ol>
+      </div>
+      <div class="new">
+        <div><b>Revamped mobile UI</b>The mobile interface now looks closer to the desktop app.</div>
+        <div><b>Bugs patched</b>A few bugs and issues have been fixed.</div>
+        <div><b>Faster desktop builds</b>Windows and Mac versions are optimized.</div>
+      </div>
+      <div class="callout" style="max-width:760px;margin:16px auto 0"><b>Benchmarks and testing:</b> for official benchmarks and other performance tests, use <b>Sxarf AI V2.0.4</b>. Results from other versions may differ.</div>
+    </div>
+  </section>
+
+  <section class="section shell" id="features">
+    <div class="head rv"><h2>Built around you</h2><p>Everything runs where you decide.</p></div>
+    <div class="feat">
+      <div class="f rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg><h3>Your hardware</h3><p>Runs on your own device, using what you already own.</p></div>
+      <div class="f rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><h3>Private by design</h3><p>Your conversations stay with you, under your control.</p></div>
+      <div class="f rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><h3>Tuned for Apple Silicon</h3><p>MLX optimizations make the Mac build fast and efficient.</p></div>
+    </div>
+    <div class="release rv">
+      <div><strong>Want the full v2.0.4 details?</strong><span>Release notes, checksums and every asset live on GitHub.</span></div>
+      <a class="btn ghost" href="https://github.com/FurinaOSS/SxarfAI/releases/tag/v2.0.4">View v2.0.4 release ↗</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="shell foot">
+    <span>© 2026 Sxarf AI · Your AI. Your Hardware. Your Control.</span>
+    <div><a href="https://github.com/FurinaOSS/SxarfAI">GitHub</a><a href="https://github.com/FurinaOSS/SxarfAI/releases">All releases</a></div>
+  </div>
+</footer>
+
+<div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+  <div class="sheet">
+    <div class="sheet-top"><span class="chip" id="mtitle">✓ Download started · here’s how to install it</span><button class="x" id="mclose" aria-label="Close">✕</button></div>
+    <div id="mbody"></div>
+    <button class="btn solid" id="mdone">Got it</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var ua=navigator.userAgent||"",os=null;
+  if(/iPhone|iPad|iPod/i.test(ua))os="ios";
+  else if(/Android/i.test(ua))os="android";
+  else if(/Mac/i.test(ua))os="mac";
+  else if(/Win/i.test(ua))os="windows";
+  var names={windows:"Windows",mac:"macOS",ios:"iPhone",android:"Android"};
+  if(os){
+    var c=document.querySelector('.card[data-os="'+os+'"]');
+    if(c){c.classList.add("rec");c.parentNode.insertBefore(c,c.parentNode.firstChild);}
+    var b=document.getElementById("heroBtn");
+    var link=c&&c.querySelector("a.btn");
+    if(b&&link){b.href=link.href;b.textContent="Download for "+names[os]+" ↓";}
+    document.getElementById("detected").textContent="We detected "+names[os]+" · Free to download · Hosted on GitHub";
+  }
+  document.querySelectorAll(".card").forEach(function(el){
+    el.addEventListener("pointermove",function(e){
+      var r=el.getBoundingClientRect();
+      el.style.setProperty("--mx",(e.clientX-r.left)+"px");
+      el.style.setProperty("--my",(e.clientY-r.top)+"px");
+    });
+  });
+  var items=document.querySelectorAll(".rv");
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.12});
+    items.forEach(function(el,i){el.style.transitionDelay=(i%4)*70+"ms";io.observe(el);});
+  }else{items.forEach(function(el){el.classList.add("in");});}
+  var modal=document.getElementById("modal"),mbody=document.getElementById("mbody");
+  function showTab(k){
+    document.querySelectorAll(".tab").forEach(function(b){b.setAttribute("aria-selected",b.dataset.tab===k);});
+    document.querySelectorAll(".gpanel").forEach(function(p){p.hidden=p.dataset.panel!==k;});
+  }
+  document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.tab);});});
+  if(os)showTab(os);
+  function openGuide(k){
+    var src=document.querySelector('.gpanel[data-panel="'+k+'"]');if(!src)return;
+    mbody.innerHTML=src.innerHTML;modal.classList.add("open");modal.setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+  }
+  function closeGuide(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.style.overflow="";}
+  document.querySelectorAll(".card a.btn").forEach(function(a){
+    a.addEventListener("click",function(){var k=a.closest(".card").dataset.os;setTimeout(function(){openGuide(k);},450);});
+  });
+  var hb=document.getElementById("heroBtn");
+  hb.addEventListener("click",function(){if(os&&hb.getAttribute("href").indexOf("#")!==0)setTimeout(function(){openGuide(os);},450);});
+  document.getElementById("mclose").addEventListener("click",closeGuide);
+  document.getElementById("mdone").addEventListener("click",closeGuide);
+  modal.addEventListener("click",function(e){if(e.target===modal)closeGuide();});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeGuide();});
+
+  var pairs=[
+    ["Summarize my notes and keep it all on this machine.","Done. Your notes were summarized right here on your device. Nothing was uploaded anywhere."],
+    ["Explain quantum computing like I’m ten.","Imagine a coin spinning in the air, heads and tails at once until it lands. Quantum bits work like that."],
+    ["Write a haiku about Mondays.","Alarm clock screaming, coffee steams in quiet hope, the week begins again."],
+    ["Give me a 20-minute dinner idea.","Garlic butter pasta with lemon and spinach. One pot, minimal cleanup."],
+    ["Help me name my cat.","Try Biscuit, Mochi or Pixel. A tiny cat deserves a name with big energy."],
+    ["What’s a good way to learn guitar?","Practice 15 minutes daily. Start with four chords and play real songs early."],
+    ["Debug: why is my loop never ending?","Your counter never changes. Add i += 1 inside the loop and it will stop."],
+    ["Plan a weekend trip to Lisbon.","Day one: Alfama and tram 28. Day two: Belém pastries and a sunset viewpoint."],
+    ["Translate “good morning” into Japanese.","おはようございます (ohayō gozaimasu). Close friends just say おはよう."],
+    ["Tips for a job interview tomorrow?","Prepare three stories, research the company, and ask one thoughtful question."],
+    ["How do vaccines work?","They give your immune system a harmless preview of a germ so it can react fast later."],
+    ["Write a short poem about the ocean.","Salt wind and silver, the tide keeps its slow promise: always coming home."],
+    ["Is it okay to drink coffee every day?","For most healthy adults, a few cups is fine. Watch your sleep and how you feel."],
+    ["Make me a workout for 15 minutes.","Three rounds: 10 squats, 8 push-ups, a 20-second plank, then 30 seconds rest."],
+    ["Explain recursion simply.","A function that calls itself on a smaller problem until it reaches a simple stopping point."],
+    ["Give me a fun fact about space.","A day on Venus is longer than its year. It spins that slowly."],
+    ["Draft a polite email asking for a deadline extension.","Hi Sam, could we move the deadline to Friday? I want the work to be solid. Thanks!"],
+    ["What should I read next?","If you like big ideas, try Project Hail Mary. It’s funny, tense and hard to put down."],
+    ["How do I stay focused while studying?","Work in 25-minute sprints, keep your phone in another room, and write your goal on a sticky note."],
+    ["Roast my sleep schedule gently.","Bold of you to call 3 a.m. ‘early’. Let’s aim for midnight, one step at a time."],
+    ["Convert 72°F to Celsius.","72°F is about 22.2°C. Perfect sweater weather."],
+    ["Suggest a name for my startup.","How about Northlight? It’s short, memorable and easy to say out loud."],
+    ["What’s the difference between weather and climate?","Weather is today’s sky. Climate is the pattern over decades."],
+    ["Help me write a toast for my best friend.","To the friend who always shows up: here’s to more laughs and terrible karaoke."],
+    ["Brainstorm a game with a time-loop twist.","A bakery sim where every morning resets but your recipes stay. Perfect them before closing."],
+    ["How does Wi-Fi actually work?","Your router turns data into radio waves, and your device turns them back into data."],
+    ["Rewrite this to sound friendlier: “Send me the file.”","Hey! Could you send the file over when you get a chance? Thank you!"],
+    ["What’s a good morning routine?","Water, sunlight, a short stretch, then tackle your hardest task first."],
+    ["Give me a riddle.","What has keys but opens no doors? A piano."],
+    ["Recommend a board game for four players.","Try Azul. It’s quick to learn, beautiful to play and friendly for beginners."],
+    ["How can I save money on groceries?","Plan meals, buy store brands, and compare unit prices instead of sticker prices."],
+    ["Write a bedtime story opening.","Once, a small lighthouse learned to hum, and every ship that passed hummed back."],
+    ["What’s the capital of Australia?","Canberra, not Sydney. It was purpose-built as a compromise between rival cities."],
+    ["Teach me one useful keyboard shortcut.","Ctrl or Cmd plus Shift plus T reopens the browser tab you just closed."],
+    ["How do I make my resume stand out?","Lead with results. “Cut load time by 40%” beats “responsible for performance”."],
+    ["Describe a color that doesn’t exist.","Imagine a warm blue that glows like sunrise. Let’s call it dawnwater."],
+    ["Compare cats and dogs in one line.","Dogs say ‘I love you’; cats say ‘you may continue serving me’."],
+    ["Pick a movie for tonight.","Go cozy and clever: a heist comedy with great music and zero stress."],
+    ["Why is the sky blue?","Air scatters short blue light waves more than red, so blue reaches your eyes from everywhere."],
+    ["Give me a productivity hack.","Write tomorrow’s top three tasks tonight. You wake up with a plan."],
+    ["Explain what an API is.","A menu for software: you request something and the service brings back the result."],
+    ["What can I cook with eggs and rice?","Egg fried rice with scallions and a splash of soy sauce. Ten minutes, tops."],
+    ["Make a tongue twister.","Six sleepy sailors sang soft songs by the sea."],
+    ["Is “password123” a strong Wi-Fi password?","Not at all. Try three random words and a number, like maple-orbit-tiger-47."],
+    ["Can you keep a secret?","Everything here stays on your device. That’s kind of the whole point."],
+    ["Describe my perfect Sunday.","Slow coffee, a long walk, a good book, and absolutely no alarms."],
+    ["How do airplanes stay up?","Wings push the air downward, and the air pushes the plane up in return."],
+    ["Write a motivational line for today.","Small steps still move you forward. Take one right now."],
+    ["What’s the best way to apologize?","Be specific, own it, skip the excuses, and say how you’ll make it right."],
+    ["Tell me a joke about programmers.","Why do programmers prefer dark mode? Because light attracts bugs."]
+  ];
+  var bag=[],last=-1;
+  function next(){
+    if(!bag.length){
+      bag=pairs.map(function(_,k){return k;});
+      for(var k=bag.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var tmp=bag[k];bag[k]=bag[j];bag[j]=tmp;}
+      if(bag[bag.length-1]===last){bag.unshift(bag.pop());}
+    }
+    last=bag.pop();return pairs[last];
+  }
+  var ask=document.getElementById("ask"),t=document.getElementById("typed");
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){var p0=next();ask.textContent=p0[0];t.textContent=p0[1];return;}
+  function run(){
+    var p=next(),i=0;ask.textContent=p[0];t.textContent="";
+    function type(){if(i<=p[1].length){t.textContent=p[1].slice(0,i++);setTimeout(type,24);}else{setTimeout(run,4200);}}
+    setTimeout(type,700);
+  }
+  run();
+})();
+</script>
+<script>
+(function(){
+const MAX_RENDER_DIM = 2400;
+const BLOOM_LEVELS = 5;
+const INTRO_SECONDS = 2.6;
+const CAMERA = 7.5;
+const FOV = 0.56;
+const RIBBON_LENGTH = 24;
+const HOVER_EFFECTS = { focus: 0, part: 1, none: 2 };
+const FIBER_STYLES = { dots: 0, dashes: 0.45, lines: 1 };
+const GRADIENTS = { depth: 0, along: 1, across: 2 };
+const RIBBON_TINT = [0, 0.75, 0.35];
+const PLACEMENTS = [
+  [0, 0, 0, 0],
+  [1.9, -4.6, -0.08, 2.4],
+  [-1.05, 2.0, 0.12, 4.1]
+];
+const RIBBON_GAIN = [1, 0.5, 0.55];
+const DEG = Math.PI / 180;
+const FOCAL = 1 / (2 * Math.tan(FOV / 2));
+
+const HEADER = `#version 300 es
+precision highp float;
+`;
+
+const SHAPE = `
+uniform float uTime;
+uniform float uTwist;
+uniform float uRoll;
+uniform float uWaves;
+uniform float uWidth;
+uniform float uRibbon;
+uniform mat3 uOrient;
+uniform float uScale;
+uniform vec4 uPlace;
+uniform float uVolume;
+
+float hash11(float n) {
+  return fract(sin(n * 91.3458) * 47453.5453);
+}
+
+vec3 centerLocal(float s) {
+  float t = uTime;
+  float ph = uPlace.w;
+  float x = s * ${RIBBON_LENGTH.toFixed(1)};
+  float y = uWaves * (0.52 * sin(x * 0.43 + t * 0.31 + ph) + 0.26 * sin(x * 0.79 - t * 0.23 + 1.3 + ph * 0.7)) + uPlace.x + x * uPlace.z;
+  float z = uWaves * 0.65 * sin(x * 0.33 + t * 0.19 + 0.7 + ph * 1.3) + uPlace.y;
+  return vec3(x, y, z);
+}
+
+float twistAt(float s, float layer) {
+  float x = s * ${RIBBON_LENGTH.toFixed(1)};
+  return uTwist * 0.483 * x + uRoll + uPlace.w * 0.6 + layer * uVolume * 0.42 + 0.5 * sin(x * 0.26 + uTime * 0.27 + uPlace.w);
+}
+
+vec3 ribbonPoint(float s, float v, float n, float layer, out vec3 normal) {
+  vec3 c0 = centerLocal(s);
+  vec3 c1 = centerLocal(s + 0.004);
+  vec3 tangent = normalize(c1 - c0);
+  vec3 up = vec3(0.0, 1.0, 0.0);
+  vec3 n0 = normalize(up - tangent * dot(up, tangent));
+  vec3 b0 = cross(tangent, n0);
+  float th = twistAt(s, layer);
+  vec3 across = cos(th) * n0 + sin(th) * b0;
+  vec3 sheet = -sin(th) * n0 + cos(th) * b0;
+  float halfWidth = uWidth * (0.78 + 0.22 * cos(s * 3.14159));
+  vec3 local = c0 + across * v * halfWidth + sheet * (n + layer * uVolume * 0.16) * halfWidth;
+  normal = uOrient * sheet;
+  return uOrient * (local * uScale);
+}
+`;
+
+const DOT_VERTEX = `${HEADER}
+${SHAPE}
+uniform mat4 uViewProj;
+uniform vec3 uEye;
+uniform vec2 uViewport;
+uniform float uDpr;
+uniform float uFibers;
+uniform float uDots;
+uniform float uFlow;
+uniform float uSize;
+uniform float uFocus;
+uniform float uDof;
+uniform float uMaxCoc;
+uniform float uFocal;
+uniform float uIntro;
+uniform vec4 uPulse;
+uniform vec4 uHover;
+uniform float uPart;
+uniform float uDotLength;
+uniform float uSparkle;
+uniform float uDepthSpread;
+uniform float uGain;
+uniform float uTips;
+uniform float uTint;
+uniform float uGradient;
+uniform float uFold;
+
+out vec2 vLocal;
+out float vRadius;
+out float vSegment;
+out vec3 vLight;
+out float vTint;
+
+vec3 project(vec3 world, out float depth) {
+  vec4 clip = uViewProj * vec4(world, 1.0);
+  depth = clip.w;
+  vec2 ndc = clip.xy / clip.w;
+  return vec3((ndc * 0.5 + 0.5) * uViewport, clip.w);
+}
+
+vec2 part(vec2 px) {
+  if (uPart <= 0.0 || uHover.w <= 0.0) return px;
+  vec2 away = px - uHover.xy;
+  float dist = length(away);
+  float radius = uHover.z;
+  float push = uPart * uHover.w * radius * 0.55 * exp(-dist * dist / (radius * radius));
+  return px + away / max(dist, 1e-3) * push * smoothstep(0.0, radius * 0.25, dist);
+}
+
+void main() {
+  int perFiber = int(uDots);
+  int fiber = gl_InstanceID / perFiber;
+  int bead = gl_InstanceID - fiber * perFiber;
+  float fi = float(fiber);
+  float fk = float(bead);
+
+  float seed = hash11(fi * 1.731 + uRibbon * 17.0);
+  float s = fract((fk + uFlow + seed * uDots) / uDots) - 0.5;
+  float sNext = s + 1.0 / uDots;
+  float layer = mod(fi, 3.0) - 1.0;
+  float slot = floor(fi / 3.0);
+  float perLayer = max(floor(uFibers / 3.0), 1.0);
+  float v = ((slot + 0.5) / perLayer) * 2.0 - 1.0 + (hash11(fi * 3.113 + 4.0) - 0.5) * (1.6 / perLayer) + layer * 0.12 / perLayer;
+  float depthOffset = (hash11(fi * 7.919 + 2.0) - 0.5) * uDepthSpread * (0.35 + 6.0 * s * s);
+
+  vec3 normal;
+  vec3 world = ribbonPoint(s, v, depthOffset, layer, normal);
+  vec3 nextNormal;
+  vec3 nextWorld = ribbonPoint(sNext, v, depthOffset, layer, nextNormal);
+
+  float depth;
+  vec3 p0 = project(world, depth);
+  float nextDepth;
+  vec3 p1 = project(nextWorld, nextDepth);
+  vec2 px = part(p0.xy);
+  vec2 pxNext = part(p1.xy);
+
+  float baseRadius = max(0.5 * uSize * uDpr * uFocal / max(depth, 0.1), 0.45);
+  float coc = min(uDof * abs(1.0 - uFocus / max(depth, 0.1)) * uViewport.y * 0.035, uMaxCoc * uDpr);
+  float radius = baseRadius + coc;
+  float spill = max(10.0 * uDpr, baseRadius);
+  float energy = pow(baseRadius / min(radius, spill), 1.25) * pow(min(1.0, spill / radius), 2.0);
+
+  vec3 toEye = normalize(uEye - world);
+  float facing = abs(dot(normalize(normal), toEye));
+  float focalPx = uViewport.y * ${FOCAL.toFixed(5)} / max(depth, 0.1);
+  float widthPx = 2.0 * uWidth * uScale * focalPx;
+  float stack = (widthPx * facing + 2.0 * baseRadius) / (widthPx + 2.0 * baseRadius);
+  float spacingFace = length(nextWorld - world) * focalPx;
+  float trail = (length(p1.xy - p0.xy) + 2.0 * baseRadius) / (spacingFace + 2.0 * baseRadius);
+  float crowd = sqrt(clamp(stack * trail, 0.002, 1.0));
+  float fold = pow(1.0 - facing, 6.0) * uFold;
+  float endFade = smoothstep(0.5, 0.4, abs(s)) * smoothstep(1.6, 4.2, depth);
+  float tipEnd = mix(0.6, 0.06 + 0.26 * hash11(fi * 9.137 + uPlace.w * 3.0), uTips);
+  float tip = exp(-pow((s - tipEnd) / 0.0065, 2.0)) * uTips;
+  endFade *= smoothstep(tipEnd + 0.003, tipEnd - 0.001, s);
+  float appear = smoothstep(0.0, 0.12, uIntro * 1.3 - (s + 0.5) - seed * 0.12);
+  float twinklePhase = hash11(fi * 13.7 + fk * 0.917 + uRibbon * 3.0);
+  float twinkle = pow(max(sin(uTime * (1.2 + 2.6 * twinklePhase) * 3.0 + twinklePhase * 61.0), 0.0), 36.0) * uSparkle * (1.0 - 0.85 * uDotLength);
+  float pulseGap = abs(s - uPulse.x) - uPulse.y * 0.42;
+  float pulse = uPulse.z * exp(-pulseGap * pulseGap / 0.0018) * (abs(uPulse.w - uRibbon) < 0.5 ? 1.0 : 0.35);
+  float strength = mix(0.45, 1.0, hash11(fi * 5.37 + 1.0)) * mix(1.0, 0.72, abs(layer) * uVolume);
+  float intensity = energy * crowd * strength * endFade * appear * 0.8 * uGain * (1.0 + fold * 7.0 + twinkle * 5.0 + pulse * 4.0 + tip * 7.0);
+  float highlight = clamp(fold * 0.55 + twinkle + pulse + tip, 0.0, 1.0);
+
+  vec2 segment = (pxNext - px) * uDotLength;
+  float segmentLength = length(segment);
+  intensity *= mix(1.0, (2.0 * radius) / (segmentLength + 2.0 * radius) * 1.6, uDotLength);
+  vec2 axis = segmentLength > 1e-3 ? segment / segmentLength : vec2(1.0, 0.0);
+  vec2 perp = vec2(-axis.y, axis.x);
+  vec2 corner = vec2(gl_VertexID == 1 || gl_VertexID == 3 ? 1.0 : 0.0, gl_VertexID >= 2 ? 1.0 : 0.0);
+  float along = mix(-radius, segmentLength + radius, corner.x);
+  float across = mix(-radius, radius, corner.y);
+  vec2 position = px + axis * along + perp * across;
+
+  vLocal = vec2(along, across);
+  vRadius = radius;
+  vSegment = segmentLength;
+  vLight = vec3(intensity, highlight, coc / max(radius, 1e-3));
+  float depthTint = clamp(uTint + smoothstep(uFocus, uFocus + 5.0, depth) * 0.5, 0.0, 1.0);
+  vTint = uGradient < 0.5 ? depthTint : uGradient < 1.5 ? smoothstep(-0.42, 0.42, s) : clamp(v * 0.5 + 0.5, 0.0, 1.0);
+  if (intensity < 0.0005) position = vec2(-1e4);
+  gl_Position = vec4(position / uViewport * 2.0 - 1.0, 0.0, 1.0);
+}`;
+
+const DUST_VERTEX = `${HEADER}
+uniform mat4 uViewProj;
+uniform vec2 uViewport;
+uniform float uDpr;
+uniform float uTime;
+uniform float uSize;
+uniform float uFocus;
+uniform float uDof;
+uniform float uMaxCoc;
+uniform float uFocal;
+uniform float uIntro;
+uniform float uSparkle;
+uniform float uScale;
+uniform float uGradient;
+uniform float uGain;
+
+out vec2 vLocal;
+out float vRadius;
+out float vSegment;
+out vec3 vLight;
+out float vTint;
+
+float hash11(float n) {
+  return fract(sin(n * 91.3458) * 47453.5453);
+}
+
+void main() {
+  float id = float(gl_InstanceID);
+  vec3 seed = vec3(hash11(id * 1.37 + 0.3), hash11(id * 2.91 + 1.7), hash11(id * 4.17 + 2.9));
+  vec3 box = vec3(9.0, 5.4, 6.0);
+  vec3 p = (seed - 0.5) * box;
+  p.z -= 0.6;
+  p += 0.18 * vec3(sin(uTime * 0.21 + seed.x * 40.0), sin(uTime * 0.17 + seed.y * 40.0), sin(uTime * 0.13 + seed.z * 40.0));
+  p *= mix(1.0, uScale, 0.5);
+  vec4 clip = uViewProj * vec4(p, 1.0);
+  float depth = clip.w;
+  vec2 px = (clip.xy / clip.w * 0.5 + 0.5) * uViewport;
+  float size = uSize * mix(0.5, 1.4, hash11(id * 7.7));
+  float baseRadius = max(0.5 * size * uDpr * uFocal / max(depth, 0.1), 0.45);
+  float coc = min(uDof * abs(1.0 - uFocus / max(depth, 0.1)) * uViewport.y * 0.035, uMaxCoc * uDpr * 1.6);
+  float radius = baseRadius + coc;
+  float spill = max(10.0 * uDpr, baseRadius);
+  float energy = pow(baseRadius / min(radius, spill), 0.9) * pow(min(1.0, spill / radius), 2.0);
+  float twinkle = pow(max(sin(uTime * (0.8 + 1.6 * seed.y) * 2.0 + seed.z * 50.0), 0.0), 8.0);
+  float intensity = energy * (0.35 + 0.65 * twinkle) * mix(0.4, 1.0, seed.x) * smoothstep(0.3, 1.0, uIntro) * (depth > 0.2 ? 1.0 : 0.0);
+  vec2 corner = vec2(gl_VertexID == 1 || gl_VertexID == 3 ? 1.0 : 0.0, gl_VertexID >= 2 ? 1.0 : 0.0) * 2.0 - 1.0;
+  vec2 position = px + corner * radius;
+  vLocal = corner * radius;
+  vRadius = radius;
+  vSegment = 0.0;
+  vLight = vec3(intensity * 0.8 * uGain, 0.3 + 0.6 * twinkle * uSparkle, coc / max(radius, 1e-3));
+  vTint = uGradient < 0.5 ? 0.45 + 0.55 * seed.y : seed.y;
+  gl_Position = vec4(position / uViewport * 2.0 - 1.0, 0.0, 1.0);
+}`;
+
+const DOT_FRAGMENT = `${HEADER}
+uniform vec3 uGlowColor;
+uniform vec3 uLineColor;
+uniform vec3 uSecondaryColor;
+in vec2 vLocal;
+in float vRadius;
+in float vSegment;
+in vec3 vLight;
+in float vTint;
+out vec4 outColor;
+void main() {
+  float along = clamp(vLocal.x, 0.0, vSegment);
+  float d = length(vec2(vLocal.x - along, vLocal.y));
+  float rho = d / max(vRadius, 1e-3);
+  if (rho > 1.0) discard;
+  float soft = clamp(2.6 / max(vRadius, 1e-3), 0.14, 1.0);
+  float disk = 1.0 - smoothstep(1.0 - soft, 1.0, rho);
+  float bokeh = disk * (0.94 + 0.08 * smoothstep(0.55, 0.95, rho));
+  float core = exp(-rho * rho * 3.2);
+  float shape = mix(core, bokeh, smoothstep(0.25, 0.7, vLight.z));
+  vec3 color = mix(mix(uGlowColor, uSecondaryColor, vTint), uLineColor, vLight.y);
+  outColor = vec4(color * shape * vLight.x, shape * vLight.x);
+}`;
+
+const FULLSCREEN = `${HEADER}
+out vec2 vUv;
+void main() {
+  vec2 p = vec2(gl_VertexID == 1 ? 3.0 : -1.0, gl_VertexID == 2 ? 3.0 : -1.0);
+  vUv = p * 0.5 + 0.5;
+  gl_Position = vec4(p, 0.0, 1.0);
+}`;
+
+const BRIGHT_FRAGMENT = `${HEADER}
+uniform sampler2D uSource;
+uniform vec2 uTexel;
+in vec2 vUv;
+out vec4 outColor;
+vec3 pick(vec2 uv) {
+  vec3 c = texture(uSource, uv).rgb;
+  float peak = max(max(c.r, c.g), c.b);
+  return c * smoothstep(0.35, 1.2, peak);
+}
+void main() {
+  vec2 o = uTexel;
+  vec3 c = pick(vUv + vec2(-o.x, -o.y)) + pick(vUv + vec2(o.x, -o.y)) + pick(vUv + vec2(-o.x, o.y)) + pick(vUv + vec2(o.x, o.y));
+  outColor = vec4(c * 0.25, 1.0);
+}`;
+
+const DOWN_FRAGMENT = `${HEADER}
+uniform sampler2D uSource;
+uniform vec2 uTexel;
+in vec2 vUv;
+out vec4 outColor;
+void main() {
+  vec2 o = uTexel;
+  vec3 c = texture(uSource, vUv).rgb * 4.0;
+  c += texture(uSource, vUv + vec2(-o.x, -o.y)).rgb;
+  c += texture(uSource, vUv + vec2(o.x, -o.y)).rgb;
+  c += texture(uSource, vUv + vec2(-o.x, o.y)).rgb;
+  c += texture(uSource, vUv + vec2(o.x, o.y)).rgb;
+  outColor = vec4(c / 8.0, 1.0);
+}`;
+
+const UP_FRAGMENT = `${HEADER}
+uniform sampler2D uSource;
+uniform vec2 uTexel;
+in vec2 vUv;
+out vec4 outColor;
+void main() {
+  vec2 o = uTexel;
+  vec3 c = texture(uSource, vUv + vec2(-o.x * 2.0, 0.0)).rgb;
+  c += texture(uSource, vUv + vec2(-o.x, o.y)).rgb * 2.0;
+  c += texture(uSource, vUv + vec2(0.0, o.y * 2.0)).rgb;
+  c += texture(uSource, vUv + vec2(o.x, o.y)).rgb * 2.0;
+  c += texture(uSource, vUv + vec2(o.x * 2.0, 0.0)).rgb;
+  c += texture(uSource, vUv + vec2(o.x, -o.y)).rgb * 2.0;
+  c += texture(uSource, vUv + vec2(0.0, -o.y * 2.0)).rgb;
+  c += texture(uSource, vUv + vec2(-o.x, -o.y)).rgb * 2.0;
+  outColor = vec4(c / 12.0, 1.0);
+}`;
+
+const COMPOSITE_FRAGMENT = `${HEADER}
+uniform sampler2D uScene;
+uniform sampler2D uBloom;
+uniform float uGlow;
+uniform float uBrightness;
+uniform float uLightMode;
+uniform float uGrain;
+uniform float uVignette;
+uniform float uFrame;
+uniform vec2 uView;
+uniform float uDpr;
+in vec2 vUv;
+out vec4 outColor;
+
+float hash(vec2 p) {
+  vec3 q = fract(vec3(p.xyx) * 0.1031);
+  q += dot(q, q.yzx + 33.33);
+  return fract((q.x + q.y) * q.z);
+}
+
+float smoother(float x) {
+  x = clamp(x, 0.0, 1.0);
+  return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+}
+
+void main() {
+  vec4 scene = texture(uScene, vUv);
+  vec3 bloom = texture(uBloom, vUv).rgb;
+  vec3 light = (scene.rgb + bloom * uGlow) * uBrightness;
+  float reach = max(uVignette * 0.3, 1e-4);
+  float mask = uVignette > 0.0 ? smoother(vUv.x / reach) * smoother((1.0 - vUv.x) / reach) * smoother(vUv.y / reach) * smoother((1.0 - vUv.y) / reach) : 1.0;
+  vec2 cell = floor(vUv * uView / max(uDpr, 1.0));
+  float grain = hash(cell + uFrame * 17.31) + hash(cell * 1.31 + uFrame * 3.7 + 9.1) - 1.0;
+  if (uLightMode > 0.5) {
+    float amount = scene.a * uBrightness;
+    float ink = (1.0 - exp(-amount * 1.5)) * mask;
+    ink = clamp(ink * (1.0 + grain * uGrain * 2.0), 0.0, 1.0);
+    vec3 hue = clamp(scene.rgb / max(scene.a, 1e-4), 0.0, 1.0);
+    vec3 tone = hue * mix(1.0, 0.72, clamp(amount * 0.35, 0.0, 1.0));
+    outColor = vec4(tone * ink, ink);
+    return;
+  }
+  vec3 color = (1.0 - exp(-light * 1.25)) * mask;
+  float peak = max(color.r, max(color.g, color.b));
+  color = max(color + grain * uGrain * (0.25 + 0.75 * sqrt(peak)), 0.0);
+  outColor = vec4(color, max(color.r, max(color.g, color.b)));
+}`;
+
+const SHAPE_UNIFORMS = ['uTime','uTwist','uRoll','uWaves','uWidth','uRibbon','uOrient','uScale','uPlace','uVolume'];
+const DOT_UNIFORMS = [...SHAPE_UNIFORMS,'uViewProj','uEye','uViewport','uDpr','uFibers','uDots','uFlow','uSize','uFocus','uDof','uMaxCoc','uFocal','uIntro','uPulse','uHover','uPart','uDotLength','uSparkle','uDepthSpread','uGain','uTips','uTint','uGradient','uFold','uGlowColor','uLineColor','uSecondaryColor'];
+const DUST_UNIFORMS = ['uViewProj','uViewport','uDpr','uTime','uSize','uFocus','uDof','uMaxCoc','uFocal','uIntro','uSparkle','uScale','uGradient','uGain','uGlowColor','uLineColor','uSecondaryColor'];
+const PASS_UNIFORMS = ['uSource', 'uTexel'];
+const COMPOSITE_UNIFORMS = ['uScene','uBloom','uGlow','uBrightness','uLightMode','uGrain','uVignette','uFrame','uView','uDpr'];
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+const compile = (gl, type, source) => {
+  const shader = gl.createShader(type);
+  if (!shader) return null;
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
+  gl.deleteShader(shader);
+  return null;
+};
+
+const link = (gl, vertexSource, fragmentSource, names) => {
+  const vertex = compile(gl, gl.VERTEX_SHADER, vertexSource);
+  const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource);
+  const program = gl.createProgram();
+  if (!vertex || !fragment || !program) return null;
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  gl.linkProgram(program);
+  gl.deleteShader(vertex);
+  gl.deleteShader(fragment);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    gl.deleteProgram(program);
+    return null;
+  }
+  const uniforms = {};
+  for (const name of names) uniforms[name] = gl.getUniformLocation(program, name);
+  return { program, uniforms };
+};
+
+const frustum = (fov, aspect, near, far) => {
+  const f = 1 / Math.tan(fov / 2);
+  const nf = 1 / (near - far);
+  return [f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0];
+};
+
+const multiply = (a, b) => {
+  const out = new Array(16);
+  for (let col = 0; col < 4; col += 1) {
+    for (let row = 0; row < 4; row += 1) {
+      out[col * 4 + row] =
+        a[row] * b[col * 4] + a[4 + row] * b[col * 4 + 1] + a[8 + row] * b[col * 4 + 2] + a[12 + row] * b[col * 4 + 3];
+    }
+  }
+  return out;
+};
+
+const orientation = (yaw, pitch, roll) => {
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
+  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const cr = Math.cos(roll), sr = Math.sin(roll);
+  const ry = [cy, 0, -sy, 0, 1, 0, sy, 0, cy];
+  const rx = [1, 0, 0, 0, cp, sp, 0, -sp, cp];
+  const rz = [cr, sr, 0, -sr, cr, 0, 0, 0, 1];
+  const mul = (a, b) => {
+    const out = new Array(9);
+    for (let col = 0; col < 3; col += 1) {
+      for (let row = 0; row < 3; row += 1) {
+        out[col * 3 + row] = a[row] * b[col * 3] + a[3 + row] * b[col * 3 + 1] + a[6 + row] * b[col * 3 + 2];
+      }
+    }
+    return out;
+  };
+  return mul(rz, mul(rx, ry));
+};
+
+const applyMat3 = (m, v) => [
+  m[0] * v[0] + m[3] * v[1] + m[6] * v[2],
+  m[1] * v[0] + m[4] * v[1] + m[7] * v[2],
+  m[2] * v[0] + m[5] * v[1] + m[8] * v[2]
+];
+
+const DEFAULTS = {
+  glowColor: '#8b5cf6', lineColor: '', secondaryColor: '', gradient: 'depth', speed: 0.5, scale: 1, rotation: 18,
+  rollSpeed: 0.15, layers: 3, waves: 1, twist: 1.2, threads: 72, volume: 0.7, spread: 1, density: 1, thickness: 1,
+  flow: 0.4, fiberStyle: 'dots', tips: 0, foldGlow: 1, perspective: 0.65, depthOfField: 0.85, focusDepth: 0,
+  particles: 0.5, sparkle: 0.5, glow: 0.8, brightness: 1, vignette: 0.3, grain: 0.06, mouseInteraction: true,
+  hoverEffect: 'focus', mouseStrength: 1, pulseOnClick: true, intro: true, lightMode: false, paused: false, dpr: undefined
+};
+
+const resolve = props => {
+  const p = { ...DEFAULTS, ...props };
+  return {
+    glowColor: String(p.glowColor),
+    lineColor: p.lineColor ? String(p.lineColor) : '',
+    secondaryColor: p.secondaryColor ? String(p.secondaryColor) : '',
+    gradient: GRADIENTS[p.gradient] ?? 0,
+    speed: Math.max(0, p.speed),
+    scale: clamp(p.scale, 0.3, 3),
+    rotation: p.rotation * DEG,
+    rollSpeed: p.rollSpeed,
+    layers: clamp(Math.round(p.layers), 1, 3),
+    waves: Math.max(0, p.waves),
+    twist: Math.max(0, p.twist),
+    threads: clamp(Math.round(p.threads), 6, 180),
+    volume: clamp(p.volume, 0, 2),
+    spread: clamp(p.spread, 0.2, 3),
+    density: clamp(p.density, 0.2, 3),
+    thickness: clamp(p.thickness, 0.2, 4),
+    flow: p.flow,
+    dotLength: FIBER_STYLES[p.fiberStyle] ?? 0,
+    tips: clamp(p.tips, 0, 1),
+    foldGlow: clamp(p.foldGlow, 0, 3),
+    perspective: clamp(p.perspective, 0, 1),
+    depthOfField: clamp(p.depthOfField, 0, 2),
+    focusDepth: clamp(p.focusDepth, -1, 1),
+    particles: clamp(p.particles, 0, 2),
+    sparkle: clamp(p.sparkle, 0, 2),
+    glow: Math.max(0, p.glow),
+    brightness: Math.max(0, p.brightness),
+    vignette: clamp(p.vignette, 0, 1),
+    grain: Math.max(0, p.grain),
+    mouseInteraction: p.mouseInteraction,
+    hover: HOVER_EFFECTS[p.hoverEffect] ?? 0,
+    mouseStrength: Math.max(0, p.mouseStrength),
+    pulseOnClick: p.pulseOnClick,
+    intro: p.intro,
+    lightMode: p.lightMode,
+    paused: p.paused,
+    dpr: p.dpr
+  };
+};
+
+function GhostFibers(container, props) {
+  const noop = { update() {}, destroy() {} };
+  let cur = { ...props };
+  let settings = resolve(cur);
+  const canvas = document.createElement('canvas');
+  canvas.className = 'ghost-fibers-canvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  container.appendChild(canvas);
+  const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false });
+  if (!gl) { canvas.remove(); return noop; }
+
+  const floatTargets = !!gl.getExtension('EXT_color_buffer_float');
+  const dots = link(gl, DOT_VERTEX, DOT_FRAGMENT, DOT_UNIFORMS);
+  const dust = link(gl, DUST_VERTEX, DOT_FRAGMENT, DUST_UNIFORMS);
+  const bright = link(gl, FULLSCREEN, BRIGHT_FRAGMENT, PASS_UNIFORMS);
+  const down = link(gl, FULLSCREEN, DOWN_FRAGMENT, PASS_UNIFORMS);
+  const up = link(gl, FULLSCREEN, UP_FRAGMENT, PASS_UNIFORMS);
+  const composite = link(gl, FULLSCREEN, COMPOSITE_FRAGMENT, COMPOSITE_UNIFORMS);
+  if (!dots || !dust || !bright || !down || !up || !composite) { canvas.remove(); return noop; }
+
+  const format = floatTargets ? gl.RGBA16F : gl.RGBA8;
+  const makeTarget = () => ({ texture: null, framebuffer: gl.createFramebuffer(), width: 0, height: 0 });
+  const allocate = (target, width, height) => {
+    if (target.texture && target.width === width && target.height === height) return;
+    if (target.texture) gl.deleteTexture(target.texture);
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texStorage2D(gl.TEXTURE_2D, 1, format, width, height);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    target.texture = texture;
+    target.width = width;
+    target.height = height;
+  };
+  const scene = makeTarget();
+  const chain = Array.from({ length: BLOOM_LEVELS }, makeTarget);
+  const vao = gl.createVertexArray();
+
+  const probe = document.createElement('canvas');
+  probe.width = 1;
+  probe.height = 1;
+  const probeContext = probe.getContext('2d', { willReadFrequently: true });
+  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  const state = {
+    time: 0, roll: 0, flow: 0, frame: 0,
+    intro: settings.intro && !reduce ? 0 : INTRO_SECONDS,
+    width: 1, height: 1, fit: 1, colorKey: '',
+    glow: [0.55, 0.36, 0.96], line: [1, 0.85, 0.98], secondary: [0.44, 0.29, 0.77],
+    pointer: { x: 0, y: 0, inside: false },
+    hover: { x: 0, y: 0, presence: 0, placed: false },
+    look: { x: 0, y: 0, vx: 0, vy: 0 },
+    focus: CAMERA + settings.focusDepth * 3,
+    pulse: { s: 0, age: 9, strength: 0, ribbon: 0 },
+    camera: null
+  };
+  let raf = 0, last = 0, visible = true, alive = true;
+
+  const toRgb = (value, fallback) => {
+    if (!probeContext || !value) return fallback;
+    const css = /^[0-9a-f]{3,8}$/i.test(value) ? `#${value}` : value;
+    probeContext.clearRect(0, 0, 1, 1);
+    probeContext.fillStyle = '#000000';
+    probeContext.fillStyle = css;
+    probeContext.fillRect(0, 0, 1, 1);
+    const [r, g, b] = probeContext.getImageData(0, 0, 1, 1).data;
+    return [r / 255, g / 255, b / 255];
+  };
+
+  const resolveColors = s => {
+    const key = `${s.glowColor}|${s.lineColor}|${s.secondaryColor}|${s.lightMode}`;
+    if (key === state.colorKey) return;
+    state.colorKey = key;
+    state.glow = toRgb(s.glowColor, [0.55, 0.36, 0.96]);
+    state.secondary = s.secondaryColor ? toRgb(s.secondaryColor, state.glow) : state.glow.map(c => c * 0.8);
+    if (s.lineColor) state.line = toRgb(s.lineColor, state.glow);
+    else state.line = s.lightMode ? state.glow : state.glow.map(c => c + (1 - c) * 0.72);
+  };
+
+  const centerLocal = (s, t, ribbon, waves) => {
+    const place = PLACEMENTS[ribbon];
+    const ph = place[3];
+    const x = s * RIBBON_LENGTH;
+    const y = waves * (0.52 * Math.sin(x * 0.43 + t * 0.31 + ph) + 0.26 * Math.sin(x * 0.79 - t * 0.23 + 1.3 + ph * 0.7)) + place[0] + x * place[2];
+    const z = waves * 0.65 * Math.sin(x * 0.33 + t * 0.19 + 0.7 + ph * 1.3) + place[1];
+    return [x, y, z];
+  };
+
+  const cameraFor = s => {
+    const aspect = state.width / Math.max(state.height, 1);
+    const eye = [0, 0, CAMERA];
+    const projection = frustum(FOV, aspect, 0.1, 60);
+    const view = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -eye[0], -eye[1], -eye[2], 1];
+    const orient = orientation(s.perspective * 0.85 + state.look.x * 0.22, 0.12 - state.look.y * 0.14, s.rotation);
+    return { eye, viewProj: multiply(projection, view), orient };
+  };
+
+  const screenOf = (camera, world) => {
+    const m = camera.viewProj;
+    const x = m[0] * world[0] + m[4] * world[1] + m[8] * world[2] + m[12];
+    const y = m[1] * world[0] + m[5] * world[1] + m[9] * world[2] + m[13];
+    const w = m[3] * world[0] + m[7] * world[1] + m[11] * world[2] + m[15];
+    return { x: ((x / w) * 0.5 + 0.5) * state.width, y: (0.5 - (y / w) * 0.5) * state.height, depth: w };
+  };
+
+  const nearestOnRibbon = (s, px, py) => {
+    const camera = state.camera;
+    if (!camera) return null;
+    let best = null;
+    for (let ribbon = 0; ribbon < s.layers; ribbon += 1) {
+      for (let i = 0; i <= 96; i += 1) {
+        const u = i / 96 - 0.5;
+        const local = centerLocal(u, state.time, ribbon, s.waves).map(c => c * s.scale * state.fit);
+        const world = applyMat3(camera.orient, local);
+        const screen = screenOf(camera, world);
+        const gap = Math.hypot(screen.x - px, screen.y - py);
+        if (!best || gap < best.gap) best = { gap, s: u, ribbon, depth: screen.depth };
+      }
+    }
+    return best;
+  };
+
+  const resize = () => {
+    const s = settings;
+    const width = Math.max(1, container.clientWidth);
+    const height = Math.max(1, container.clientHeight);
+    const baseDpr = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
+    const longest = Math.max(width, height) * baseDpr;
+    const ratio = longest > MAX_RENDER_DIM ? (baseDpr * MAX_RENDER_DIM) / longest : baseDpr;
+    const pixelWidth = Math.max(1, Math.round(width * ratio));
+    const pixelHeight = Math.max(1, Math.round(height * ratio));
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+    }
+    state.width = width;
+    state.height = height;
+    state.fit = clamp(width / height / 1.5, 0.6, 1);
+    render();
+  };
+
+  const drawPass = (program, target, source, texel) => {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+    gl.viewport(0, 0, target.width, target.height);
+    gl.useProgram(program.program);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, source.texture);
+    gl.uniform1i(program.uniforms.uSource, 0);
+    gl.uniform2f(program.uniforms.uTexel, texel[0], texel[1]);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+
+  const render = () => {
+    const s = settings;
+    resolveColors(s);
+    const camera = cameraFor(s);
+    state.camera = camera;
+    const ratio = canvas.height / Math.max(state.height, 1);
+    const intro = s.paused || reduce ? 1 : clamp(state.intro / INTRO_SECONDS, 0, 1);
+    const introEase = 1 - (1 - intro) * (1 - intro) * (1 - intro);
+
+    allocate(scene, canvas.width, canvas.height);
+    gl.bindVertexArray(vao);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, scene.framebuffer);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+
+    const dotsPerFiber = Math.round(260 * s.density);
+    const blurCap = 22 * clamp(Math.sqrt(56000 / (s.threads * dotsPerFiber * s.layers)), 0.45, 1);
+    const area = Math.max(0.8 * s.thickness, 0.45) ** 2 / 0.64;
+    const load = Math.pow((s.threads / 72) * s.density * area, -0.75);
+    gl.useProgram(dots.program);
+    const u = dots.uniforms;
+    gl.uniform1f(u.uTime, state.time);
+    gl.uniform1f(u.uTwist, s.twist);
+    gl.uniform1f(u.uRoll, state.roll);
+    gl.uniform1f(u.uWaves, s.waves);
+    gl.uniform1f(u.uWidth, 0.62 * s.spread);
+    gl.uniformMatrix3fv(u.uOrient, false, camera.orient);
+    gl.uniform1f(u.uScale, s.scale * state.fit);
+    gl.uniformMatrix4fv(u.uViewProj, false, camera.viewProj);
+    gl.uniform3f(u.uEye, camera.eye[0], camera.eye[1], camera.eye[2]);
+    gl.uniform2f(u.uViewport, canvas.width, canvas.height);
+    gl.uniform1f(u.uDpr, ratio);
+    gl.uniform1f(u.uFibers, s.threads);
+    gl.uniform1f(u.uDots, dotsPerFiber);
+    gl.uniform1f(u.uFlow, state.flow);
+    gl.uniform1f(u.uSize, 1.6 * s.thickness);
+    gl.uniform1f(u.uFocus, state.focus);
+    gl.uniform1f(u.uDof, s.depthOfField);
+    gl.uniform1f(u.uMaxCoc, blurCap);
+    gl.uniform1f(u.uFocal, CAMERA);
+    gl.uniform1f(u.uIntro, introEase);
+    gl.uniform4f(u.uPulse, state.pulse.s, state.pulse.age, state.pulse.strength, state.pulse.ribbon);
+    gl.uniform4f(u.uHover, state.hover.x * ratio, (state.height - state.hover.y) * ratio, 140 * ratio, state.hover.presence * s.mouseStrength);
+    gl.uniform1f(u.uPart, s.hover === 1 ? 1 : 0);
+    gl.uniform1f(u.uDotLength, s.dotLength);
+    gl.uniform1f(u.uSparkle, s.sparkle);
+    gl.uniform1f(u.uDepthSpread, 0.12);
+    gl.uniform1f(u.uVolume, s.volume);
+    gl.uniform3f(u.uGlowColor, state.glow[0], state.glow[1], state.glow[2]);
+    gl.uniform3f(u.uLineColor, state.line[0], state.line[1], state.line[2]);
+    gl.uniform3f(u.uSecondaryColor, state.secondary[0], state.secondary[1], state.secondary[2]);
+    gl.uniform1f(u.uTips, s.tips);
+    gl.uniform1f(u.uGradient, s.gradient);
+    gl.uniform1f(u.uFold, s.foldGlow);
+    for (let ribbon = 0; ribbon < s.layers; ribbon += 1) {
+      const place = PLACEMENTS[ribbon];
+      gl.uniform1f(u.uRibbon, ribbon);
+      gl.uniform4f(u.uPlace, place[0], place[1], place[2], place[3]);
+      gl.uniform1f(u.uGain, RIBBON_GAIN[ribbon] * load);
+      gl.uniform1f(u.uTint, RIBBON_TINT[ribbon]);
+      gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, s.threads * dotsPerFiber);
+    }
+
+    const dustCount = Math.round(420 * s.particles);
+    if (dustCount > 0) {
+      gl.useProgram(dust.program);
+      const d = dust.uniforms;
+      gl.uniformMatrix4fv(d.uViewProj, false, camera.viewProj);
+      gl.uniform2f(d.uViewport, canvas.width, canvas.height);
+      gl.uniform1f(d.uDpr, ratio);
+      gl.uniform1f(d.uTime, state.time);
+      gl.uniform1f(d.uSize, 2.2 * s.thickness);
+      gl.uniform1f(d.uFocus, state.focus);
+      gl.uniform1f(d.uDof, s.depthOfField);
+      gl.uniform1f(d.uMaxCoc, 22);
+      gl.uniform1f(d.uFocal, CAMERA);
+      gl.uniform1f(d.uIntro, introEase);
+      gl.uniform1f(d.uSparkle, s.sparkle);
+      gl.uniform1f(d.uScale, s.scale * state.fit);
+      gl.uniform1f(d.uGradient, s.gradient);
+      gl.uniform1f(d.uGain, 1 / s.thickness);
+      gl.uniform3f(d.uGlowColor, state.glow[0], state.glow[1], state.glow[2]);
+      gl.uniform3f(d.uLineColor, state.line[0], state.line[1], state.line[2]);
+      gl.uniform3f(d.uSecondaryColor, state.secondary[0], state.secondary[1], state.secondary[2]);
+      gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, dustCount);
+    }
+    gl.disable(gl.BLEND);
+
+    const blooming = s.glow > 0.001 && !s.lightMode;
+    gl.bindVertexArray(vao);
+    if (blooming) {
+      chain.forEach((target, index) => {
+        allocate(target, Math.max(1, Math.round(canvas.width / 2 ** (index + 1))), Math.max(1, Math.round(canvas.height / 2 ** (index + 1))));
+      });
+      drawPass(bright, chain[0], scene, [0.5 / scene.width, 0.5 / scene.height]);
+      for (let index = 1; index < BLOOM_LEVELS; index += 1) {
+        drawPass(down, chain[index], chain[index - 1], [1 / chain[index - 1].width, 1 / chain[index - 1].height]);
+      }
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      for (let index = BLOOM_LEVELS - 1; index > 0; index -= 1) {
+        drawPass(up, chain[index - 1], chain[index], [0.5 / chain[index].width, 0.5 / chain[index].height]);
+      }
+      gl.disable(gl.BLEND);
+    }
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(composite.program);
+    const c = composite.uniforms;
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, scene.texture);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, blooming ? chain[0].texture : scene.texture);
+    gl.uniform1i(c.uScene, 0);
+    gl.uniform1i(c.uBloom, 1);
+    gl.uniform1f(c.uGlow, blooming ? s.glow : 0);
+    gl.uniform1f(c.uBrightness, s.brightness);
+    gl.uniform1f(c.uLightMode, s.lightMode ? 1 : 0);
+    gl.uniform1f(c.uGrain, s.grain);
+    gl.uniform1f(c.uVignette, s.vignette);
+    gl.uniform1f(c.uFrame, state.frame % 977);
+    gl.uniform2f(c.uView, canvas.width, canvas.height);
+    gl.uniform1f(c.uDpr, ratio);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindVertexArray(null);
+  };
+
+  const frame = now => {
+    raf = 0;
+    if (!alive || !visible || document.hidden) return;
+    const s = settings;
+    const elapsed = last ? (now - last) / 1000 : 1 / 60;
+    const dt = Math.min(0.05, elapsed);
+    last = now;
+    const moving = !s.paused && !reduce;
+    if (moving) {
+      state.frame += 1;
+      state.time += dt * s.speed;
+      state.roll += dt * s.speed * s.rollSpeed;
+      state.flow += dt * s.flow * 12;
+      state.intro += Math.min(elapsed, 1);
+    } else if (state.intro < INTRO_SECONDS) {
+      state.intro = INTRO_SECONDS;
+    }
+    state.pulse.age += dt;
+    state.pulse.strength = Math.max(0, 1 - state.pulse.age / 1.8) ** 2;
+
+    const { pointer, hover, look } = state;
+    const active = s.mouseInteraction && pointer.inside && !reduce;
+    if (active && !hover.placed) {
+      hover.x = pointer.x;
+      hover.y = pointer.y;
+      hover.placed = true;
+    }
+    hover.x += (pointer.x - hover.x) * (1 - Math.exp(-dt / 0.08));
+    hover.y += (pointer.y - hover.y) * (1 - Math.exp(-dt / 0.08));
+    const goal = active ? 1 : 0;
+    hover.presence += (goal - hover.presence) * (1 - Math.exp(-dt / (goal > hover.presence ? 0.3 : 0.6)));
+    if (!active && hover.presence < 0.001) hover.placed = false;
+    const lookX = active ? (pointer.x / state.width - 0.5) * 0.5 : 0;
+    const lookY = active ? (0.5 - pointer.y / state.height) * 0.5 : 0;
+    look.vx += (30 * (lookX - look.x) - 11 * look.vx) * dt;
+    look.vy += (30 * (lookY - look.y) - 11 * look.vy) * dt;
+    look.x += look.vx * dt;
+    look.y += look.vy * dt;
+
+    const resting = CAMERA + s.focusDepth * 3;
+    let focusGoal = resting;
+    if (active && s.hover === 0) {
+      const near = nearestOnRibbon(s, hover.x, hover.y);
+      if (near) focusGoal = resting + (near.depth - resting) * hover.presence * Math.min(1, s.mouseStrength);
+    }
+    state.focus += (focusGoal - state.focus) * (1 - Math.exp(-dt / 0.35));
+
+    render();
+    const settling =
+      Math.abs(goal - hover.presence) > 0.002 ||
+      Math.abs(lookX - look.x) > 0.0002 ||
+      Math.abs(lookY - look.y) > 0.0002 ||
+      Math.abs(focusGoal - state.focus) > 0.001 ||
+      state.pulse.strength > 0.001;
+    if (moving || settling) raf = requestAnimationFrame(frame);
+    else last = 0;
+  };
+
+  const wake = () => {
+    if (!raf && alive && visible && !document.hidden) raf = requestAnimationFrame(frame);
+  };
+
+  const onPointerMove = event => {
+    const rect = container.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    state.pointer.x = x;
+    state.pointer.y = y;
+    state.pointer.inside = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
+    wake();
+  };
+
+  const onPointerDown = event => {
+    const s = settings;
+    if (!s.mouseInteraction || !s.pulseOnClick || event.button !== 0 || reduce) return;
+    if (event.target instanceof Element && event.target.closest('a, button, input, textarea, select, label, [role="button"]')) return;
+    const rect = container.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+    const near = nearestOnRibbon(s, x, y);
+    if (near) state.pulse = { s: near.s, age: 0, strength: 1, ribbon: near.ribbon };
+    wake();
+  };
+
+  const onPointerLeave = () => { state.pointer.inside = false; wake(); };
+  const onVisibility = () => { last = 0; wake(); };
+
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(container);
+  const intersection = new IntersectionObserver(entries => {
+    visible = entries.some(entry => entry.isIntersecting);
+    if (visible) { last = 0; wake(); }
+  });
+  intersection.observe(container);
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('pointerdown', onPointerDown);
+  document.documentElement.addEventListener('pointerleave', onPointerLeave);
+  document.addEventListener('visibilitychange', onVisibility);
+  resize();
+  wake();
+
+  return {
+    update(next) {
+      cur = { ...cur, ...next };
+      settings = resolve(cur);
+      if (!raf) render();
+      wake();
+    },
+    destroy() {
+      alive = false;
+      cancelAnimationFrame(raf);
+      resizeObserver.disconnect();
+      intersection.disconnect();
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerdown', onPointerDown);
+      document.documentElement.removeEventListener('pointerleave', onPointerLeave);
+      document.removeEventListener('visibilitychange', onVisibility);
+      gl.deleteVertexArray(vao);
+      [scene, ...chain].forEach(t => { if (t.texture) gl.deleteTexture(t.texture); gl.deleteFramebuffer(t.framebuffer); });
+      [dots, dust, bright, down, up, composite].forEach(e => gl.deleteProgram(e.program));
+      canvas.remove();
+    }
+  };
+}
+
+// ---- mount on the page, matched to the light/dark theme ----
+function isDark() {
+  const t = document.documentElement.getAttribute('data-theme');
+  if (t) return t === 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+const small = window.innerWidth < 700;
+const themed = d => d
+  ? { lightMode: false, glowColor: '#b9c3d1', secondaryColor: '#808b9d', brightness: 0.9 }
+  : { lightMode: true, glowColor: '#22222a', secondaryColor: '#5a5a66', brightness: 0.95 };
+const fibers = GhostFibers(document.getElementById('fibers'), {
+  ...themed(isDark()),
+  threads: small ? 44 : 72,
+  dpr: small ? 1.5 : undefined
+});
+const refresh = () => fibers.update(themed(isDark()));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refresh);
+new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
 </body>
 </html>
