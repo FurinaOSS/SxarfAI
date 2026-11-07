@@ -18,3 +18,5 @@ out/
 *.log
 
 /Sxarf-Ai-Mxl-LessThan4GB/
+
+/mobile/plugins/inference/.build/
