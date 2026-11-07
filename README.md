@@ -47,4 +47,3 @@ Research controls: **Agents: Auto / Always / Off**. Auto routes likely
 research questions to local specialists; web search uses keyless search-engine
 HTML endpoints and can be unavailable. Inspect `/agents`, `/agents/status`,
 and `/agents/trace` on the local server.
-# SxarfAI
