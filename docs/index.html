@@ -144,6 +144,25 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;color:var(--muted);f
 .x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--chip);color:var(--text);cursor:pointer;font-size:14px}
 #mbody .sub{margin-bottom:18px}
 .sheet .btn{width:100%;margin-top:22px}
+/* cli install */
+.cli{max-width:760px;margin:0 auto;padding:28px;border:1px solid var(--line);border-radius:22px;background:var(--card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.cli-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.cli-top h3{margin:0;font-size:20px;letter-spacing:-.03em}
+.term{border:1px solid var(--line);border-radius:16px;background:var(--bg2);overflow:hidden}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.term-bar b{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.term-bar em{margin-left:auto;font:400 11px var(--mono);font-style:normal;color:var(--muted)}
+.term-body{display:flex;align-items:flex-start;gap:14px;padding:16px 16px 16px 18px}
+.term-body code{flex:1;min-width:0;font:400 12.5px/1.7 var(--mono);color:var(--text);word-break:break-all;white-space:pre-wrap}
+.term-body code i{font-style:normal;color:var(--muted);user-select:none}
+.copy{flex:none;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--btn);color:var(--btn-t);font:600 12px var(--sans);cursor:pointer;transition:transform .2s,opacity .2s}
+.copy:hover{transform:translateY(-1px)}
+.copy svg{width:14px;height:14px}
+.copy.done{opacity:.85}
+.cli-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.cli-actions .btn{padding:12px 18px;font-size:13px}
+.cli .callout{margin-top:18px}
+@media(max-width:560px){.term-body{flex-direction:column}.copy{width:100%;justify-content:center}.cli{padding:20px}.cli-actions .btn{width:100%}}
 @media(max-width:700px){.new{grid-template-columns:1fr}.gpanel{padding:20px}.sheet{padding:20px}}
 .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
 .rv.in{opacity:1;transform:none}
@@ -166,6 +185,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;color:var(--muted);f
     <a class="brand" href="#top" aria-label="Sxarf AI home"><span class="logo">S</span>Sxarf AI</a>
     <nav class="links" aria-label="Main">
       <a href="#features">Features</a>
+      <a href="#cli">CLI</a>
       <a class="keep" href="#guide">Install guide</a>
       <a href="https://github.com/FurinaOSS/SxarfAI/releases/tag/Mobile-Revamp">Release notes</a>
       <a class="pill" href="#download">Download</a>
@@ -227,6 +247,25 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;color:var(--muted);f
         <a class="btn solid" href="https://github.com/FurinaOSS/SxarfAI/releases/download/Mobile-Revamp/SxarfAI_2.0.4.apk">Download for Android ↓</a>
         <div class="fmt">.APK · ARM64</div>
       </article>
+    </div>
+  </section>
+
+  <section class="section shell" id="cli">
+    <div class="head rv"><h2>Install from the terminal</h2><p>Prefer the command line? One command and you’re running.</p></div>
+    <div class="cli rv">
+      <div class="cli-top"><h3>Install CLI</h3><span class="chip">animagine_cli.py · Python 3</span></div>
+      <div class="term">
+        <div class="term-bar"><b></b><b></b><b></b><em>Terminal</em></div>
+        <div class="term-body">
+          <code id="cliCmd"><i>$ </i>curl -L "https://github.com/FurinaOSS/SxarfAI/releases/download/CLI_FIRST_RELEASE/animagine_cli.py" -o animagine_cli.py &amp;&amp; python3 animagine_cli.py</code>
+          <button class="copy" id="cliCopy" type="button" aria-label="Copy install command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><span id="cliCopyLbl">Copy</span></button>
+        </div>
+      </div>
+      <div class="cli-actions">
+        <a class="btn ghost" href="https://github.com/FurinaOSS/SxarfAI/releases/download/CLI_FIRST_RELEASE/animagine_cli.py">Download animagine_cli.py ↓</a>
+        <a class="btn ghost" href="https://github.com/FurinaOSS/SxarfAI/releases/tag/CLI_FIRST_RELEASE">View CLI release ↗</a>
+      </div>
+      <div class="callout"><b>Setup is automatic.</b> The CLI handles setup for you on first run, preparing everything it needs so you can get started right away. Downloaded it manually? Run <b>python3 animagine_cli.py</b> in the same folder.</div>
     </div>
   </section>
 
@@ -384,6 +423,14 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;color:var(--muted);f
   document.getElementById("mdone").addEventListener("click",closeGuide);
   modal.addEventListener("click",function(e){if(e.target===modal)closeGuide();});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")closeGuide();});
+
+  var cb=document.getElementById("cliCopy"),cl=document.getElementById("cliCopyLbl");
+  if(cb){cb.addEventListener("click",function(){
+    var txt=document.getElementById("cliCmd").textContent.replace(/^\$\s*/,"").trim();
+    function ok(){cl.textContent="Copied ✓";cb.classList.add("done");setTimeout(function(){cl.textContent="Copy";cb.classList.remove("done");},2000);}
+    function fallback(){var ta=document.createElement("textarea");ta.value=txt;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok();}catch(e){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(ok,fallback);}else{fallback();}
+  });}
 
   var pairs=[
     ["Summarize my notes and keep it all on this machine.","Done. Your notes were summarized right here on your device. Nothing was uploaded anywhere."],
